@@ -602,6 +602,12 @@
 
             let valorTotal = quantidadeAtual;
 
+            if (quantidadeAtual > quantidadeDesejada) {
+                alert('A quantidade atual não pode ser maior que a quantidade desejada.');
+                document.getElementById('quantidade').focus();
+                return; // impede a continuação do envio
+            }
+
             ilusaoPers = parseInt(document.getElementById('ilusaoPers').value) || 0;
             ilusaoESO = parseInt(document.getElementById('ilusaoESO').value) || 0;
             ilusaoAtaqueBasico = parseInt(document.getElementById('ilusaoAtaqueBasico').value) || 0;
