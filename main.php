@@ -1,0 +1,929 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Cupons</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #f65c51;
+      --primary-hover: #e0483f;
+
+      --bg: #f9f9f9;
+      --card: #ffffff;
+      --border: #dcdcdc;
+      --accent: #2f2f2f;
+      --input-bg: #f4f4f4;
+      --text: #1b1b1b;
+
+      --header-bg: #2f2f2f;
+      --header-text: #ffffff;
+    }
+
+    body.dark-mode {
+      --bg: #5b5b5b;
+      --card: #1e1e1e;
+      --border: #2a2a2a;
+      --accent: #cccccc;
+      --input-bg: #292929;
+      --text: #f0f0f0;
+
+      --header-bg: #e8e8e8;      /* header claro no dark */
+      --header-text: #111111;    /* texto preto no dark */
+    }
+
+    * {
+      box-sizing: border-box;
+      transition:
+        background-color 0.3s ease,
+        color 0.1s ease,         /* <- transição da cor mais rápida */
+        border 0.3s ease;
+    }
+
+    .theme-switch {
+      position: relative;
+      width: 80px;
+      height: 40px;
+    }
+
+    .theme-switch input {
+      display: none;
+    }
+
+    .toggle {
+      background: linear-gradient(to right, #aee2f9, #82c0ff);
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      padding: 0 10px;
+      height: 100%;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+      transition: background 0.4s ease;
+    }
+
+    .icon {
+      font-size: 18px;
+      z-index: 2;
+    }
+
+    .ball {
+      position: absolute;
+      height: 32px;
+      width: 32px;
+      background-color: #fff;
+      border-radius: 50%;
+      top: 4px;
+      left: 4px;
+      transition: transform 0.4s ease;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield; /* remove setinhas no Firefox */
+      appearance: textfield; /* remove em alguns casos do Chrome */
+      padding: 6px 10px;
+      height: 36px;
+      line-height: 1.4;
+      box-sizing: border-box;
+    }
+
+    /* Reabilita os spinners somente no hover/focus se quiser */
+    input[type="number"]:hover,
+    input[type="number"]:focus {
+      appearance: auto;
+      -moz-appearance: auto;
+    }
+
+    /* Esconde completamente setas no Chrome (opcional) */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input:checked + .toggle {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    }
+
+    input:checked + .toggle .ball {
+      transform: translateX(40px);
+    }
+
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+   header {
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      font-family: 'Amatic SC', cursive;
+      padding: 30px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      flex: 1; /* permite que ocupe o espaço entre o início e o botão */
+      text-align: center;
+    }
+
+    #toggle-theme {
+      background: none;
+      border: 2px solid white;
+      border-radius: 8px;
+      color: white;
+      font-size: 1.2rem;
+      padding: 6px 12px;
+      cursor: pointer;
+      border: 2px solid currentColor;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    #toggle-theme:hover {
+      background: white;
+      color: black;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      padding: 40px 10px;
+    }
+
+    .square {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 1500px;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .left, .right {
+      padding: 25px;
+      flex: 1 1 300px;
+    }
+
+    .left {
+      background-color: var(--input-bg);
+      border-right: 1px solid var(--border);
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      background-color: var(--input-bg);
+      color: var(--text);
+    }
+
+    input[readonly] {
+      background-color: #bbb;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    input[type="submit"] {
+      margin-top: 16px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #e0483f;
+    }
+
+    .mensal-container {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .mensal-container h3 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .mensal-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .mensal-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .mensal-group input {
+      margin-top: 4px;
+      padding: 6px;
+      width: 70px;
+    }
+
+    .mensal-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .square {
+        flex-direction: column;
+      }
+      .left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    .tooltip-container {
+      position: relative;
+      display: inline-block;
+      margin: 10px;
+      float: right;
+    }
+
+    .tooltip-container .tooltip-text {
+      visibility: hidden;
+      width: 600px;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      border-radius: 16px;
+      padding: 8px;
+      position: absolute;
+      top: -5px;
+      right: 110%;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .tooltip-container:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .fa-info-circle {
+      font-size: 36px;
+      cursor: pointer;
+    }
+
+    .align_right {
+      text-align: right;
+    }
+
+    input.invalid, select.invalid {
+      border: 2px solid red;
+    }
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Calculadora de Cupons</h1>
+    <div class="theme-switch">
+      <input type="checkbox" id="theme-toggle" />
+      <label for="theme-toggle" class="toggle">
+        <span class="icon sun">☀️</span>
+        <span class="icon moon">🌙</span>
+        <span class="ball"></span>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <div class="square">
+      <div class="left">
+        <form class="form-container" id="cupomForm">
+          <label for="quantidade">Quantidade atual de cupons</label>
+          <input type="number" id="quantidade" name="quantidade" placeholder="Ex: 5234">
+
+          <label for="desejados">N&uacute;mero de cupons desejados</label>
+          <input type="number" id="desejados" name="desejados" placeholder="Ex: 110000">
+
+          <label for="tempo">Tempo necess&aacute;rio</label>
+          <input type="text" id="tempo" readonly>
+
+          <label for="medalha">Medalha</label>
+          <select id="medalha" name="medalha">
+            <option value="none">Nenhuma</option>
+            <option value="gennin">Gennin</option>
+            <option value="chunnin">Chunnin</option>
+            <option value="jounnin">Jounnin</option>
+          </select>
+
+          <label for="pergaminho">Pergaminho de Crescimento</label>
+          <select id="pergaminho" name="pergaminho">
+            <option value="basico">B&aacute;sico</option>
+            <option value="avancado">Avan&ccedil;ado</option>
+          </select>
+
+          <label for="arvore">N&iacute;vel da &Aacute;rvore do Jardim</label>
+          <input type="number" id="arvore" name="arvore" min="1" max="12" placeholder="Ex: 5">
+
+          <label for="ilusaoPers">Ranking na Ilus&atilde;o de Persegui&ccedil;&atilde;o</label>
+          <input type="number" id="ilusaoPers" name="ilusaoPers" min="1" value="1">
+
+          <label for="ilusaoESO">Ranking na Ilus&atilde;o de Eso</label>
+          <input type="number" id="ilusaoESO" name="ilusaoESO" min="1" value="1">
+
+          <label for="ilusaoAtaqueBasico">Ranking na Ilus&atilde;o de Ataque Basico</label>
+          <input type="number" id="ilusaoAtaqueBasico" name="ilusaoAtaqueBasico" min="1" value="1">
+
+          <input type="submit" value="Calcular">
+        </form>
+      </div>
+
+      <div class="right">
+      <div class="tooltip-container">
+        <i class="fa fa-info-circle"></i>
+        <div class="tooltip-text">
+            Inserir a quantidade de mensais/carteiras que ter&aacute;s. <br>
+            Por exemplo, se tens 1 mensal ativo e +2k lingotes para +2 mensais escreve 3.
+        </div>
+      </div>
+        <div class="mensal-container">
+          <h3>Mensal</h3>
+          <div class="mensal-inputs">
+            <div class="mensal-group">
+              <label for="mensal300">300</label>
+              <input type="number" id="mensal300" name="mensal300" value="0" />
+            </div>
+            <div class="mensal-group">
+              <label for="mensal600">600</label>
+              <input type="number" id="mensal600" name="mensal600" value="0"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="mensal-container">
+          <h3>Carteira</h3>
+          <div class="mensal-inputs">
+            <div class="mensal-group"><label>500</label><input type="number" id="carteira500" min="0" name="carteira500" value="0"/></div>
+            <div class="mensal-group"><label>1k</label><input type="number" id="carteira1000" min="0" name="carteira1000" value="0"/></div>
+            <div class="mensal-group"><label>5k</label><input type="number" id="carteira5000" min="0" name="carteira5000" value="0"/></div>
+            <div class="mensal-group"><label>9k</label><input type="number" id="carteira9000" min="0" name="carteira9000" value="0"/></div>
+          </div>
+        </div>
+
+        <div class="mensal-container">
+          <h3>Transporte & Saque</h3>
+          <div class="mensal-inputs">
+            <div class="mensal-group"><label>Transporte</label><input type="number" id="transporte" name="transporte" min="0" max="3" value="0"/></div>
+            <div class="mensal-group"><label>Saque</label><input type="number" id="saque" name="saque" min="0" max="3" value="0"/></div>
+          </div>
+        </div>
+
+        <div class="mensal-container">
+          <h3>Eventos Gerais</h3>
+          <div class="mensal-inputs">
+            <div class="mensal-group"><label><input type="checkbox" id="arena_duelo"> Arena Duelo</label></div>
+            <div class="mensal-group"><label><input type="checkbox" id="mobilizacao"> Mobiliza&ccedil;&atilde;o</label></div>
+            <div class="mensal-group"><label><input type="checkbox" id="martelo"> Martelo</label></div>
+            <div class="mensal-group"><label><input type="checkbox" id="lanterna_desejos"> Lanterna</label></div>
+            <div class="mensal-group"><label><input type="checkbox" id="recrutamento_limitado"> Recrutamento Limitado</label></div>
+            <div class="mensal-group"><label><input type="checkbox" id="chaves_caverna"> Chaves da Caverna</label></div>
+            <div class="mensal-group"><label><input type="checkbox" id="treino_ajuda"> Ajuda Ninja (Sinos)</label></div>
+            
+          </div>
+        </div>
+
+        <div class="mensal-container">
+          <h3>Eventos Cash</h3>
+          <div class="mensal-inputs">
+            <div class="mensal-group">
+              <label>
+                <input type="checkbox" id="semana_fuku"> Casha em semana Fuku?
+              </label>
+              <input type="number" id="valor_fuku" placeholder="Por dia" style="margin-left: 10px; display: none; width: 150px;" />
+            </div>
+            <div class="mensal-group">
+              <label>
+                <input type="checkbox" id="semana_arvore"> Casha em semana 	&Aacute;rvore?
+              </label>
+              <input type="number" id="valor_arvore" placeholder="Por dia" style="margin-left: 10px; display: none; width: 150px; " />
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+      const themeToggle = document.getElementById('theme-toggle');
+
+      // Iniciar com o tema correto baseado no armazenamento
+      if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.checked = true;
+      }
+
+      themeToggle.addEventListener('change', () => {
+        if (themeToggle.checked) {
+          document.body.classList.add('dark-mode');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.body.classList.remove('dark-mode');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+
+  
+      const semanaFukuCheckbox = document.getElementById('semana_fuku');
+      const valorFukuInput = document.getElementById('valor_fuku');
+
+      const semanaArvoreCheckbox = document.getElementById('semana_arvore');
+      const valorArvoreInput = document.getElementById('valor_arvore');
+
+      semanaFukuCheckbox.addEventListener('change', function () {
+        valorFukuInput.style.display = this.checked ? 'inline-block' : 'none';
+      });
+
+      semanaArvoreCheckbox.addEventListener('change', function () {
+        valorArvoreInput.style.display = this.checked ? 'inline-block' : 'none';
+      });
+
+      const transporteInput = document.getElementById("transporte");
+           const saqueInput = document.getElementById("saque");
+           const maxTotal = 3;
+
+           function validateTransporteSaque() {
+           let transporte = parseInt(transporteInput.value) || 0;
+           let saque = parseInt(saqueInput.value) || 0;
+
+           if (transporte + saque > maxTotal) {
+               if (this === transporteInput) {
+               saqueInput.value = Math.max(0, maxTotal - transporte);
+               } else if (this === saqueInput) {
+               transporteInput.value = Math.max(0, maxTotal - saque);
+               }
+           }
+       }
+
+       transporteInput.addEventListener("input", validateTransporteSaque);
+       saqueInput.addEventListener("input", validateTransporteSaque);
+
+
+    function getDaysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+    
+    const startDate = new Date('2025/05/8');
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const dayOfMonth = today.getDate();
+    const totalDays = getDaysInMonth(year, month)
+
+    const diffTime = Math.abs(today-startDate);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+
+    const arenaDueloStart = new Date('2025/05/29');
+    const pergaminhoCrescimentoStart = new Date('2025/06/05');
+
+    /*
+    Ver qual semana atual de eventos
+    */
+    const wichWeek = Math.floor((diffDays/7)%4);
+
+    let quantidadeAtual;
+    let quantidadeDesejada;
+    let arvoreNivel;
+    let bonusMedalha;
+    let bonusPergaminho;
+    let mensal300Dias = 0;
+    let mensal600Dias = 0;
+    let carteira500Dias;
+    let carteira1000Dias;
+    let carteira5000Dias;
+    let carteira9000Dias;
+    
+    let arena_duelo = 0;
+    let mobilizacao = 0;
+    let ajudaNinjaSinosSemana = 0;
+    let ajudaNinjaSinosDia = 0;
+    let marteloDia = 0;
+    let marteloSemana = 0;
+    let chavesCaverna = 0;
+    let lanterna_desejos = 0;
+    let recrutamento_limitado = 0;
+
+    let valorFukuDia = 0;
+    let valorArvoreDia = 0;
+
+    let simDay = new Date(today);
+    simDay.getMonth(); 
+    simDay.getDay();
+    let simMonthNumberOfDays = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+    let simWichWeek = wichWeek;
+    let simDiffTime = diffTime;
+    let simDiffDays = diffDays;
+
+
+    document.getElementById('cupomForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Verifica se todos os campos obrigatórios estão preenchidos
+        const inputs = this.querySelectorAll('input, select');
+        let allValid = true;
+        let firstEmpty = null;
+
+        inputs.forEach(input => {
+            // Ignora checkboxes e campos de texto readonly
+            if (input.type === 'checkbox' || input.readOnly) return;
+
+            if (input.value.trim() === '') {
+                allValid = false;
+                if (!firstEmpty) firstEmpty = input;
+                input.classList.add('invalid'); // opcional: adicionar estilo visual
+            } else {
+                input.classList.remove('invalid');
+            }
+        });
+
+        if (!allValid) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            if (firstEmpty) firstEmpty.focus();
+            return;
+        }
+          
+        quantidadeAtual = parseInt(document.getElementById('quantidade').value) || 0;
+        quantidadeDesejada = parseInt(document.getElementById('desejados').value) || 0;
+
+        let valorTotal = quantidadeAtual;
+
+        ilusaoPers = parseInt(document.getElementById('ilusaoPers').value) || 0;
+        ilusaoESO = parseInt(document.getElementById('ilusaoESO').value) || 0;
+        ilusaoAtaqueBasico = parseInt(document.getElementById('ilusaoAtaqueBasico').value) || 0;
+
+        arvore = parseInt(document.getElementById('arvore').value) || 0;
+
+        const medalha = document.getElementById('medalha').value;
+        bonusMedalha = { none: 0, gennin: 5, chunnin: 10, jounnin: 15 }[medalha] || 0;
+
+        
+        const pergaminho = document.getElementById('pergaminho').value;
+        bonusPergaminho = pergaminho === 'avancado' ? 1800 : 0;
+
+        mensal300 = parseInt(document.getElementById('mensal300').value) || 0;
+        mensal600 = parseInt(document.getElementById('mensal600').value) || 0;
+
+        carteira500 = parseInt(document.getElementById('carteira500').value) || 0;
+        carteira1000 = parseInt(document.getElementById('carteira1000').value) || 0;
+        carteira5000 = parseInt(document.getElementById('carteira5000').value) || 0;
+        carteira9000 = parseInt(document.getElementById('carteira9000').value) || 0;
+
+        
+        transporte = parseInt(document.getElementById('transporte').value) || 0;
+        saque = parseInt(document.getElementById('saque').value) || 0;
+        
+        if(document.getElementById('arena_duelo').checked)
+            arena_duelo = 1460;
+
+        if(document.getElementById('mobilizacao').checked)
+            mobilizacao = 200;
+
+        if(document.getElementById('mobilizacao').checked)
+        {
+            ajudaNinjaSinosSemana = 40;
+            ajudaNinjaSinosDia = 10;
+        }
+
+        if(document.getElementById('chaves_caverna').checked)
+            chavesCaverna = 150;
+
+        if(document.getElementById('martelo').checked)
+        {
+            marteloDia = 240;
+            marteloSemana = 100;
+        }
+
+        if(document.getElementById('lanterna_desejos').checked)
+            lanterna_desejos = 50;
+
+        if(document.getElementById('recrutamento_limitado').checked)
+            recrutamento_limitado = 80;
+
+        if(document.getElementById('semana_fuku').checked)
+            valorFukuDia = parseInt(document.getElementById('valor_fuku').value) || 0; 
+          
+        if(document.getElementById('semana_arvore').checked)
+            valorArvoreDia = parseInt(document.getElementById('valor_arvore').value) || 0;
+          
+
+
+        do{
+            simDiffTime = Math.abs(simDay-startDate);
+            simDiffDays = Math.floor(simDiffTime / (1000 * 60 * 60 * 24)); 
+            simWichWeek = Math.floor((simDiffDays/7)%4);
+            
+            valorTotal += 40*transporte;
+            valorTotal += 40*saque;
+
+            valorTotal += 10; //Teste Sobrevivencia
+            valorTotal += 10; // 1h online
+            valorTotal += 30; //Roleta da Guild
+
+            valorTotal += bonusMedalha;
+
+            valorTotal += arvore*2+1;
+
+            if(mensal300 > 0 && mensal300Dias == 0){
+                mensal300Dias = 30;
+                valorTotal += 300;
+            }
+
+            if(mensal300Dias > 0){
+                valorTotal += 50;
+            }
+
+            if(mensal600 > 0 && mensal600Dias == 0){
+                mensal600Dias = 30;
+                valorTotal += 600;
+            }
+            
+            if(mensal600Dias > 0){
+                valorTotal += 100;
+            }
+
+            if(document.getElementById('arena_duelo').checked){
+                const diffArena = Math.floor((simDay - arenaDueloStart) / (1000 * 60 * 60 * 24));
+                if (diffArena >= 0 && diffArena % 63 === 0) {
+                    valorTotal += 1460;
+                }
+            }
+
+            if(bonusPergaminho > 0){
+                const diffPergaminho = Math.floor((simDay - pergaminhoCrescimentoStart) / (1000 * 60 * 60 * 24));
+                if (diffPergaminho >= 0 && diffPergaminho % 56 === 0) {
+                    valorTotal += 1800;
+                }
+            }
+
+            if( simDay.getDay() == 1){
+                if(ilusaoPers == 1){
+                    valorTotal += 800;
+                }
+                else if(ilusaoPers == 2){
+                    valorTotal += 700;
+                }
+                else if(ilusaoPers == 3){
+                    valorTotal += 600;
+                }
+                else if(ilusaoPers >= 4 && ilusaoPers <= 10){
+                    valorTotal += 400;
+                }
+                else if(ilusaoPers >= 11 && ilusaoPers <= 20){
+                    valorTotal += 350;
+                }
+                else if(ilusaoPers >= 21 && ilusaoPers <= 50){
+                    valorTotal += 320;
+                }
+                else if(ilusaoPers >= 51 && ilusaoPers <= 100){
+                    valorTotal += 300;
+                }
+                else{
+                    valorTotal += 250;
+                }
+                
+                if(ilusaoESO == 1){
+                    valorTotal += 800;
+                }
+                else if(ilusaoESO == 2){
+                    valorTotal += 700;
+                }
+                else if(ilusaoESO == 3){
+                    valorTotal += 600;
+                }
+                else if(ilusaoESO >= 4 && ilusaoESO <= 10){
+                    valorTotal += 400;
+                }
+                else if(ilusaoESO >= 11 && ilusaoESO <= 20){
+                    valorTotal += 350;
+                }
+                else if(ilusaoESO >= 21 && ilusaoESO <= 50){
+                    valorTotal += 320;
+                }
+                else if(ilusaoESO >= 51 && ilusaoESO <= 100){
+                    valorTotal += 300;
+                }
+                else{
+                    valorTotal += 250;
+                }
+                
+                if(ilusaoAtaqueBasico == 1){
+                    valorTotal += 800;
+                }
+                else if(ilusaoAtaqueBasico == 2){
+                    valorTotal += 700;
+                }
+                else if(ilusaoAtaqueBasico == 3){
+                    valorTotal += 600;
+                }
+                else if(ilusaoAtaqueBasico >= 4 && ilusaoAtaqueBasico <= 10){
+                    valorTotal += 400;
+                }
+                else if(ilusaoAtaqueBasico >= 11 && ilusaoAtaqueBasico <= 20){
+                    valorTotal += 350;
+                }
+                else if(ilusaoAtaqueBasico >= 21 && ilusaoAtaqueBasico <= 50){
+                    valorTotal += 320;
+                }
+                else if(ilusaoAtaqueBasico >= 51 && ilusaoAtaqueBasico <= 100){
+                    valorTotal += 300;
+                }
+                else{
+                    valorTotal += 250;
+                }
+            }
+            if( simDay.getDay() == 6)
+            {
+                valorTotal += 160; //Invocação da Guild
+                valorTotal += bonusMedalha;
+            }
+
+            //check-in
+            if (simDay.getDate() == 2) {
+                valorTotal += 10;
+            }
+            if (simDay.getDate() == 5) {
+                valorTotal += 20;
+            }
+            else if (simDay.getDate() == 10) {
+                valorTotal += 30;
+            }
+            else if (simDay.getDate() == 17) {
+                valorTotal += 40;
+            }
+            else if (simDay.getDate() == 26) {
+                valorTotal += 50;
+            }
+            else if (simDay.getDate() == simMonthNumberOfDays) {
+                valorTotal += 100;
+            }
+
+            // Semana do Fuku
+            if(simWichWeek == 0){
+                if( simDay.getDay() == 4){
+                    valorTotal += 80; // Camera do Tesouro
+                    valorTotal += chavesCaverna;
+                    valorTotal += 220; //Dados
+                }
+                if(valorFukuDia > 0){
+                    valorTotal += (valorFukuDia*250)/1000; // Ovos Dourados
+                    valorTotal += (valorFukuDia*300)/1000; // Presente por Recarga
+                    if(valorFukuDia >= 500){
+                        valorTotal += 200; // Recarga Diaria
+                    }
+                }
+            }
+            // Semana da Raspadinha
+            else if (simWichWeek == 1){
+                valorTotal += ajudaNinjaSinosDia; 
+                valorTotal += lanterna_desejos;
+                if( simDay.getDay() == 4){
+                    valorTotal += recrutamento_limitado;
+                    valorTotal += ajudaNinjaSinosSemana;
+                }
+            }
+            // Semana da Árvore
+            else if (simWichWeek == 2){
+                valorTotal += marteloDia;
+                if( simDay.getDay() == 4){
+                    valorTotal += mobilizacao;
+                    valorTotal += marteloSemana;
+                    valorTotal += 240; // Grande Roleta;
+                }
+                if(valorArvoreDia > 0){
+                    valorTotal += (valorFukuDia*300)/1000; // Presente por Recarga
+                    if(valorArvoreDia*7 >= 100000){
+                        valorTotal += valorArvoreDia*0.2; //Presente Aniversário
+                    }else{
+                        valorTotal += 20000; //Presente Aniversário cps maximos
+                    }
+                    if(valorArvoreDia >= 500){
+                        valorTotal+= 200; //Recarga Diaria
+                    }
+                }
+            }
+            // Semana da Carteira
+            else if (simWichWeek == 3){
+                if(carteira500Dias>0){
+                    valorTotal += 200;
+                    carteira500Dias--;
+                }
+                if(carteira1000Dias>0){
+                    valorTotal += 300;
+                    carteira1000Dias--;
+                }
+                if(carteira5000Dias>0){
+                    valorTotal += 1400;
+                    carteira5000Dias--;
+                }
+                if(carteira9000Dias>0){
+                    valorTotal += 2500;
+                    carteira9000Dias--;
+                }
+                valorTotal += 30; //Treino Jutsu
+                valorTotal += 30; // Festival de Cerejeira
+                if( simDay.getDay() == 4){
+                    if(carteira500>0){
+                        carteira500--;
+                        valorTotal += 500; //1.º dia da carteira
+                        carteira500Dias = 6;
+                    }
+                    if(carteira1000>0){
+                        carteira1000--;
+                        valorTotal += 800; //1.º dia da carteira
+                        carteira1000Dias = 6;
+                    }
+                    if(carteira5000>0){
+                        carteira5000--;
+                        valorTotal += 4500; //1.º dia da carteira
+                        carteira5000Dias = 6;
+                    }
+                    if(carteira9000>0){
+                        carteira9000--;
+                        valorTotal += 7500; //1.º dia da carteira
+                        carteira9000Dias = 6;
+                    }
+                }
+            }
+
+            simDay.setDate(simDay.getDate() + 1);
+                
+            console.log(valorTotal);
+            console.log(quantidadeDesejada);
+            console.log(simDay);
+
+            simMonthNumberOfDays = new Date(simDay.getFullYear(), simDay.getMonth() + 1, 0).getDate();
+
+            if( simDay.getDay() == 7)  simDay.getDay() = 0;
+        }while(valorTotal < quantidadeDesejada);
+        
+
+        const totalSimTime = Math.floor((simDay - today) / (1000 * 60 * 60 * 24));
+        const totalSimTimeMonths = (totalSimTime/30).toFixed(1);
+
+        document.getElementById("tempo").value = "Será necessário por volta de " + totalSimTimeMonths + " meses";  
+    });
+
+  </script>
+</body>
+</html>
