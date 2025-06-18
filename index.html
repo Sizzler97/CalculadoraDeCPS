@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -109,27 +109,27 @@
             box-sizing: border-box;
         }
 
-            /* Reabilita os spinners somente no hover/focus se quiser */
-            input[type="number"]:hover,
-            input[type="number"]:focus {
-                appearance: auto;
-                -moz-appearance: auto;
-            }
+        /* Reabilita os spinners somente no hover/focus se quiser */
+        input[type="number"]:hover,
+        input[type="number"]:focus {
+            appearance: auto;
+            -moz-appearance: auto;
+        }
 
-            /* Esconde completamente setas no Chrome (opcional) */
-            input[type="number"]::-webkit-outer-spin-button,
-            input[type="number"]::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
+        /* Esconde completamente setas no Chrome (opcional) */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
         input:checked + .toggle {
             background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
         }
 
-            input:checked + .toggle .ball {
-                transform: translateX(40px);
-            }
+        input:checked + .toggle .ball {
+            transform: translateX(40px);
+        }
 
 
         body {
@@ -137,6 +137,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: var(--text);
+            overflow-x: hidden;
         }
 
         header {
@@ -191,7 +192,9 @@
             border-radius: 16px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
             overflow: hidden;
+            margin: 0 auto;
         }
+
 
         .left, .right {
             padding: 25px;
@@ -244,9 +247,9 @@
             transition: background 0.3s;
         }
 
-            input[type="submit"]:hover {
-                background-color: #e0483f;
-            }
+        input[type="submit"]:hover {
+            background-color: #e0483f;
+        }
 
         .mensal-container {
             background-color: var(--card);
@@ -257,12 +260,12 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
-            .mensal-container h3 {
-                margin-top: 0;
-                text-align: center;
-                font-size: 18px;
-                color: var(--accent);
-            }
+        .mensal-container h3 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 18px;
+            color: var(--accent);
+        }
 
         .mensal-inputs {
             display: flex;
@@ -278,19 +281,19 @@
             font-size: 14px;
         }
 
-            .mensal-group input {
-                margin-top: 4px;
-                padding: 6px;
-                width: 70px;
-            }
+        .mensal-group input {
+            margin-top: 4px;
+            padding: 6px;
+            width: 70px;
+        }
 
-            .mensal-group label {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                cursor: pointer;
-                white-space: nowrap;
-            }
+        .mensal-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
 
         @media (max-width: 768px) {
             .square {
@@ -310,27 +313,31 @@
             float: right;
         }
 
-            .tooltip-container .tooltip-text {
-                visibility: hidden;
-                width: 600px;
-                background-color: #333;
-                color: #fff;
-                text-align: left;
-                border-radius: 16px;
-                padding: 8px;
-                position: absolute;
-                top: -5px;
-                right: 110%;
-                z-index: 1;
-                opacity: 0;
-                transition: opacity 0.3s;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            }
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            width: 600px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 16px;
+            padding: 8px;
+            position: absolute;
+            top: -5px;
+            right: 110%;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            max-width: 90vw;
+            width: auto;
+            right: 0;
+            left: auto;
+        }
 
-            .tooltip-container:hover .tooltip-text {
-                visibility: visible;
-                opacity: 1;
-            }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
 
         .fa-info-circle {
             font-size: 36px;
@@ -344,6 +351,77 @@
         input.invalid, select.invalid {
             border: 2px solid red;
         }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem; /* menor em telas pequenas */
+            }
+
+            main {
+                padding: 20px 5px;
+            }
+
+            .left, .right {
+                padding: 15px;
+            }
+
+            .mensal-inputs {
+                justify-content: flex-start;
+                gap: 12px;
+            }
+
+            .tooltip-container .tooltip-text {
+                width: 90vw; /* reduz largura da tooltip */
+                right: 0;
+                left: auto;
+            }
+
+            .mensal-group input {
+                width: 60px;
+            }
+
+            #valor_fuku,
+            #valor_arvore {
+                width: 120px;
+            }
+
+            .fa-info-circle {
+                font-size: 24px;
+            }
+
+            .form-container input[type="submit"] {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .mensal-inputs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .mensal-group {
+                width: 100%;
+                align-items: flex-start;
+            }
+
+                .mensal-group input[type="number"] {
+                    width: 100%;
+                }
+        }
+
+        @media (max-width: 500px) {
+            header {
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 5px;
+            }
+
+            .theme-switch {
+                margin-top: 10px;
+            }
+        }
+
     </style>
 </head>
 <body>
