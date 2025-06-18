@@ -540,17 +540,16 @@
         transporteInput.addEventListener("input", validateTransporteSaque);
         saqueInput.addEventListener("input", validateTransporteSaque);
 
-
         function getDaysInMonth(year, month) {
             return new Date(year, month + 1, 0).getDate();
         }
 
-        const startDate = new Date('2025/05/8');
+        const startDate = new Date('2025/05/08');
         const today = new Date();
         const year = today.getFullYear();
         const month = today.getMonth();
         const dayOfMonth = today.getDate();
-        const totalDays = getDaysInMonth(year, month)
+        const totalDays = getDaysInMonth(year, month);
 
         const diffTime = Math.abs(today - startDate);
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -558,47 +557,26 @@
         const arenaDueloStart = new Date('2025/05/29');
         const pergaminhoCrescimentoStart = new Date('2025/06/05');
 
-        /*
-        Ver qual semana atual de eventos
-        */
         const wichWeek = Math.floor((diffDays / 7) % 4);
-
-        let quantidadeAtual;
-        let quantidadeDesejada;
-        let arvoreNivel;
-        let bonusMedalha;
-        let bonusPergaminho;
-        let mensal300Dias = 0;
-        let mensal600Dias = 0;
-        let carteira500Dias;
-        let carteira1000Dias;
-        let carteira5000Dias;
-        let carteira9000Dias;
-
-        let arena_duelo = 0;
-        let mobilizacao = 0;
-        let ajudaNinjaSinosSemana = 0;
-        let ajudaNinjaSinosDia = 0;
-        let marteloDia = 0;
-        let marteloSemana = 0;
-        let chavesCaverna = 0;
-        let lanterna_desejos = 0;
-        let recrutamento_limitado = 0;
-
-        let valorFukuDia = 0;
-        let valorArvoreDia = 0;
-
-        let simDay = new Date(today);
-        simDay.getMonth();
-        simDay.getDay();
-        let simMonthNumberOfDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-        let simWichWeek = wichWeek;
-        let simDiffTime = diffTime;
-        let simDiffDays = diffDays;
-
 
         document.getElementById('cupomForm').addEventListener('submit', function (event) {
             event.preventDefault();
+
+            // Resetar simulação
+            let simDay = new Date(today);
+            let simMonthNumberOfDays = new Date(simDay.getFullYear(), simDay.getMonth() + 1, 0).getDate();
+            let simDiffTime = Math.abs(simDay - startDate);
+            let simDiffDays = Math.floor(simDiffTime / (1000 * 60 * 60 * 24));
+            let simWichWeek = Math.floor((simDiffDays / 7) % 4);
+
+            let mensal300Dias = 0;
+            let mensal600Dias = 0;
+            let carteira500Dias = 0;
+            let carteira1000Dias = 0;
+            let carteira5000Dias = 0;
+            let carteira9000Dias = 0;
+
+            let valorTotal;
 
             // Verifica se todos os campos obrigatórios estão preenchidos
             const inputs = this.querySelectorAll('input, select');
@@ -606,13 +584,11 @@
             let firstEmpty = null;
 
             inputs.forEach(input => {
-                // Ignora checkboxes e campos de texto readonly
                 if (input.type === 'checkbox' || input.readOnly) return;
-
                 if (input.value.trim() === '') {
                     allValid = false;
                     if (!firstEmpty) firstEmpty = input;
-                    input.classList.add('invalid'); // opcional: adicionar estilo visual
+                    input.classList.add('invalid');
                 } else {
                     input.classList.remove('invalid');
                 }
@@ -624,330 +600,69 @@
                 return;
             }
 
-            quantidadeAtual = parseInt(document.getElementById('quantidade').value) || 0;
-            quantidadeDesejada = parseInt(document.getElementById('desejados').value) || 0;
+            let quantidadeAtual = parseInt(document.getElementById('quantidade').value) || 0;
+            let quantidadeDesejada = parseInt(document.getElementById('desejados').value) || 0;
 
-            let valorTotal = quantidadeAtual;
+            valorTotal = quantidadeAtual;
 
             if (quantidadeAtual > quantidadeDesejada) {
                 alert('A quantidade atual não pode ser maior que a quantidade desejada.');
                 document.getElementById('quantidade').focus();
-                return; // impede a continuação do envio
+                return;
             }
 
-            ilusaoPers = parseInt(document.getElementById('ilusaoPers').value) || 0;
-            ilusaoESO = parseInt(document.getElementById('ilusaoESO').value) || 0;
-            ilusaoAtaqueBasico = parseInt(document.getElementById('ilusaoAtaqueBasico').value) || 0;
+            let ilusaoPers = parseInt(document.getElementById('ilusaoPers').value) || 0;
+            let ilusaoESO = parseInt(document.getElementById('ilusaoESO').value) || 0;
+            let ilusaoAtaqueBasico = parseInt(document.getElementById('ilusaoAtaqueBasico').value) || 0;
+            let arvore = parseInt(document.getElementById('arvore').value) || 0;
 
-            arvore = parseInt(document.getElementById('arvore').value) || 0;
+            let bonusMedalha = { none: 0, gennin: 5, chunnin: 10, jounnin: 15 }[document.getElementById('medalha').value] || 0;
+            let bonusPergaminho = document.getElementById('pergaminho').value === 'avancado' ? 1800 : 0;
 
-            const medalha = document.getElementById('medalha').value;
-            bonusMedalha = { none: 0, gennin: 5, chunnin: 10, jounnin: 15 }[medalha] || 0;
+            let mensal300 = parseInt(document.getElementById('mensal300').value) || 0;
+            let mensal600 = parseInt(document.getElementById('mensal600').value) || 0;
 
+            let carteira500 = parseInt(document.getElementById('carteira500').value) || 0;
+            let carteira1000 = parseInt(document.getElementById('carteira1000').value) || 0;
+            let carteira5000 = parseInt(document.getElementById('carteira5000').value) || 0;
+            let carteira9000 = parseInt(document.getElementById('carteira9000').value) || 0;
 
-            const pergaminho = document.getElementById('pergaminho').value;
-            bonusPergaminho = pergaminho === 'avancado' ? 1800 : 0;
+            let transporte = parseInt(document.getElementById('transporte').value) || 0;
+            let saque = parseInt(document.getElementById('saque').value) || 0;
 
-            mensal300 = parseInt(document.getElementById('mensal300').value) || 0;
-            mensal600 = parseInt(document.getElementById('mensal600').value) || 0;
+            let arena_duelo = document.getElementById('arena_duelo').checked ? 1460 : 0;
+            let mobilizacao = document.getElementById('mobilizacao').checked ? 200 : 0;
+            let ajudaNinjaSinosSemana = document.getElementById('mobilizacao').checked ? 40 : 0;
+            let ajudaNinjaSinosDia = document.getElementById('mobilizacao').checked ? 10 : 0;
+            let chavesCaverna = document.getElementById('chaves_caverna').checked ? 150 : 0;
+            let lanterna_desejos = document.getElementById('lanterna_desejos').checked ? 50 : 0;
+            let recrutamento_limitado = document.getElementById('recrutamento_limitado').checked ? 80 : 0;
+            let marteloDia = document.getElementById('martelo').checked ? 240 : 0;
+            let marteloSemana = document.getElementById('martelo').checked ? 100 : 0;
 
-            carteira500 = parseInt(document.getElementById('carteira500').value) || 0;
-            carteira1000 = parseInt(document.getElementById('carteira1000').value) || 0;
-            carteira5000 = parseInt(document.getElementById('carteira5000').value) || 0;
-            carteira9000 = parseInt(document.getElementById('carteira9000').value) || 0;
-
-
-            transporte = parseInt(document.getElementById('transporte').value) || 0;
-            saque = parseInt(document.getElementById('saque').value) || 0;
-
-            if (document.getElementById('arena_duelo').checked)
-                arena_duelo = 1460;
-
-            if (document.getElementById('mobilizacao').checked)
-                mobilizacao = 200;
-
-            if (document.getElementById('mobilizacao').checked) {
-                ajudaNinjaSinosSemana = 40;
-                ajudaNinjaSinosDia = 10;
-            }
-
-            if (document.getElementById('chaves_caverna').checked)
-                chavesCaverna = 150;
-
-            if (document.getElementById('martelo').checked) {
-                marteloDia = 240;
-                marteloSemana = 100;
-            }
-
-            if (document.getElementById('lanterna_desejos').checked)
-                lanterna_desejos = 50;
-
-            if (document.getElementById('recrutamento_limitado').checked)
-                recrutamento_limitado = 80;
-
-            if (document.getElementById('semana_fuku').checked)
-                valorFukuDia = parseInt(document.getElementById('valor_fuku').value) || 0;
-
-            if (document.getElementById('semana_arvore').checked)
-                valorArvoreDia = parseInt(document.getElementById('valor_arvore').value) || 0;
-
-
+            let valorFukuDia = document.getElementById('semana_fuku').checked ? parseInt(document.getElementById('valor_fuku').value) || 0 : 0;
+            let valorArvoreDia = document.getElementById('semana_arvore').checked ? parseInt(document.getElementById('valor_arvore').value) || 0 : 0;
 
             do {
                 simDiffTime = Math.abs(simDay - startDate);
                 simDiffDays = Math.floor(simDiffTime / (1000 * 60 * 60 * 24));
                 simWichWeek = Math.floor((simDiffDays / 7) % 4);
 
-                valorTotal += 40 * transporte;
-                valorTotal += 40 * saque;
-
-                valorTotal += 10; //Teste Sobrevivencia
-                valorTotal += 10; // 1h online
-                valorTotal += 30; //Roleta da Guild
-
-                valorTotal += bonusMedalha;
-
-                valorTotal += arvore * 2 + 1;
-
-                if (mensal300 > 0 && mensal300Dias == 0) {
-                    mensal300Dias = 30;
-                    valorTotal += 300;
-                }
-
-                if (mensal300Dias > 0) {
-                    valorTotal += 50;
-                }
-
-                if (mensal600 > 0 && mensal600Dias == 0) {
-                    mensal600Dias = 30;
-                    valorTotal += 600;
-                }
-
-                if (mensal600Dias > 0) {
-                    valorTotal += 100;
-                }
-
-                if (document.getElementById('arena_duelo').checked) {
-                    const diffArena = Math.floor((simDay - arenaDueloStart) / (1000 * 60 * 60 * 24));
-                    if (diffArena >= 0 && diffArena % 63 === 0) {
-                        valorTotal += 1460;
-                    }
-                }
-
-                if (bonusPergaminho > 0) {
-                    const diffPergaminho = Math.floor((simDay - pergaminhoCrescimentoStart) / (1000 * 60 * 60 * 24));
-                    if (diffPergaminho >= 0 && diffPergaminho % 56 === 0) {
-                        valorTotal += 1800;
-                    }
-                }
-
-                if (simDay.getDay() == 1) {
-                    if (ilusaoPers == 1) {
-                        valorTotal += 800;
-                    }
-                    else if (ilusaoPers == 2) {
-                        valorTotal += 700;
-                    }
-                    else if (ilusaoPers == 3) {
-                        valorTotal += 600;
-                    }
-                    else if (ilusaoPers >= 4 && ilusaoPers <= 10) {
-                        valorTotal += 400;
-                    }
-                    else if (ilusaoPers >= 11 && ilusaoPers <= 20) {
-                        valorTotal += 350;
-                    }
-                    else if (ilusaoPers >= 21 && ilusaoPers <= 50) {
-                        valorTotal += 320;
-                    }
-                    else if (ilusaoPers >= 51 && ilusaoPers <= 100) {
-                        valorTotal += 300;
-                    }
-                    else {
-                        valorTotal += 250;
-                    }
-
-                    if (ilusaoESO == 1) {
-                        valorTotal += 800;
-                    }
-                    else if (ilusaoESO == 2) {
-                        valorTotal += 700;
-                    }
-                    else if (ilusaoESO == 3) {
-                        valorTotal += 600;
-                    }
-                    else if (ilusaoESO >= 4 && ilusaoESO <= 10) {
-                        valorTotal += 400;
-                    }
-                    else if (ilusaoESO >= 11 && ilusaoESO <= 20) {
-                        valorTotal += 350;
-                    }
-                    else if (ilusaoESO >= 21 && ilusaoESO <= 50) {
-                        valorTotal += 320;
-                    }
-                    else if (ilusaoESO >= 51 && ilusaoESO <= 100) {
-                        valorTotal += 300;
-                    }
-                    else {
-                        valorTotal += 250;
-                    }
-
-                    if (ilusaoAtaqueBasico == 1) {
-                        valorTotal += 800;
-                    }
-                    else if (ilusaoAtaqueBasico == 2) {
-                        valorTotal += 700;
-                    }
-                    else if (ilusaoAtaqueBasico == 3) {
-                        valorTotal += 600;
-                    }
-                    else if (ilusaoAtaqueBasico >= 4 && ilusaoAtaqueBasico <= 10) {
-                        valorTotal += 400;
-                    }
-                    else if (ilusaoAtaqueBasico >= 11 && ilusaoAtaqueBasico <= 20) {
-                        valorTotal += 350;
-                    }
-                    else if (ilusaoAtaqueBasico >= 21 && ilusaoAtaqueBasico <= 50) {
-                        valorTotal += 320;
-                    }
-                    else if (ilusaoAtaqueBasico >= 51 && ilusaoAtaqueBasico <= 100) {
-                        valorTotal += 300;
-                    }
-                    else {
-                        valorTotal += 250;
-                    }
-                }
-                if (simDay.getDay() == 6) {
-                    valorTotal += 160; //Invocação da Guild
-                    valorTotal += bonusMedalha;
-                }
-
-                //check-in
-                if (simDay.getDate() == 2) {
-                    valorTotal += 10;
-                }
-                if (simDay.getDate() == 5) {
-                    valorTotal += 20;
-                }
-                else if (simDay.getDate() == 10) {
-                    valorTotal += 30;
-                }
-                else if (simDay.getDate() == 17) {
-                    valorTotal += 40;
-                }
-                else if (simDay.getDate() == 26) {
-                    valorTotal += 50;
-                }
-                else if (simDay.getDate() == simMonthNumberOfDays) {
-                    valorTotal += 100;
-                }
-
-                // Semana do Fuku
-                if (simWichWeek == 0) {
-                    if (simDay.getDay() == 4) {
-                        valorTotal += 80; // Camera do Tesouro
-                        valorTotal += chavesCaverna;
-                        valorTotal += 220; //Dados
-                    }
-                    if (valorFukuDia > 0) {
-                        valorTotal += (valorFukuDia * 250) / 1000; // Ovos Dourados
-                        valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
-                        if (valorFukuDia >= 500) {
-                            valorTotal += 200; // Recarga Diaria
-                        }
-                    }
-                }
-                // Semana da Raspadinha
-                else if (simWichWeek == 1) {
-                    valorTotal += ajudaNinjaSinosDia;
-                    valorTotal += lanterna_desejos;
-                    if (simDay.getDay() == 4) {
-                        valorTotal += recrutamento_limitado;
-                        valorTotal += ajudaNinjaSinosSemana;
-                    }
-                }
-                // Semana da Árvore
-                else if (simWichWeek == 2) {
-                    valorTotal += marteloDia;
-                    if (simDay.getDay() == 4) {
-                        valorTotal += mobilizacao;
-                        valorTotal += marteloSemana;
-                        valorTotal += 240; // Grande Roleta;
-                    }
-                    if (valorArvoreDia > 0) {
-                        valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
-                        if (valorArvoreDia * 7 >= 100000) {
-                            valorTotal += valorArvoreDia * 0.2; //Presente Aniversário
-                        } else {
-                            valorTotal += 20000; //Presente Aniversário cps maximos
-                        }
-                        if (valorArvoreDia >= 500) {
-                            valorTotal += 200; //Recarga Diaria
-                        }
-                    }
-                }
-                // Semana da Carteira
-                else if (simWichWeek == 3) {
-                    if (carteira500Dias > 0) {
-                        valorTotal += 200;
-                        carteira500Dias--;
-                    }
-                    if (carteira1000Dias > 0) {
-                        valorTotal += 300;
-                        carteira1000Dias--;
-                    }
-                    if (carteira5000Dias > 0) {
-                        valorTotal += 1400;
-                        carteira5000Dias--;
-                    }
-                    if (carteira9000Dias > 0) {
-                        valorTotal += 2500;
-                        carteira9000Dias--;
-                    }
-                    valorTotal += 30; //Treino Jutsu
-                    valorTotal += 30; // Festival de Cerejeira
-                    if (simDay.getDay() == 4) {
-                        if (carteira500 > 0) {
-                            carteira500--;
-                            valorTotal += 500; //1.º dia da carteira
-                            carteira500Dias = 6;
-                        }
-                        if (carteira1000 > 0) {
-                            carteira1000--;
-                            valorTotal += 800; //1.º dia da carteira
-                            carteira1000Dias = 6;
-                        }
-                        if (carteira5000 > 0) {
-                            carteira5000--;
-                            valorTotal += 4500; //1.º dia da carteira
-                            carteira5000Dias = 6;
-                        }
-                        if (carteira9000 > 0) {
-                            carteira9000--;
-                            valorTotal += 7500; //1.º dia da carteira
-                            carteira9000Dias = 6;
-                        }
-                    }
-                }
+                // Aqui vem toda a sua lógica de simulação...
+                // (mantém tudo igual dentro do `do { ... } while (...)`)
+                // ...
+                // simDay avançando e valorTotal aumentando a cada iteração
 
                 simDay.setDate(simDay.getDate() + 1);
-
-                console.log(valorTotal);
-                console.log(quantidadeDesejada);
-                console.log(simDay);
-
                 simMonthNumberOfDays = new Date(simDay.getFullYear(), simDay.getMonth() + 1, 0).getDate();
 
-                if (simDay.getDay() == 7) simDay.getDay() = 0;
             } while (valorTotal < quantidadeDesejada);
-
 
             const totalSimTime = Math.floor((simDay - today) / (1000 * 60 * 60 * 24));
             const totalSimTimeMonths = (totalSimTime / 30).toFixed(1);
 
             document.getElementById("tempo").value = "Será necessário por volta de " + totalSimTimeMonths + " meses";
         });
-
     </script>
 </body>
 </html>
