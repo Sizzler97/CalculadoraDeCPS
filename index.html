@@ -583,7 +583,6 @@
             }
         });
 
-
         const semanaFukuCheckbox = document.getElementById('semana_fuku');
         const valorFukuInput = document.getElementById('valor_fuku');
 
@@ -927,11 +926,12 @@
                     }
                     if (valorFukuDia > 0) {
 
-                        if (valorFukuDia =< 20000)
+                        if (valorFukuDia <= 20000) {
                             valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
-                        else
+                        } else {
                             valorTotal += (20000 * 300) / 1000; // Presente por Recarga
-                        if (valorFukuDia =< 5000)
+                        }
+                        if (valorFukuDia <= 5000)
                             valorTotal += (valorFukuDia * 250) / 1000; // Ovos Dourados
                         else
                             valorTotal += (5000 * 250) / 1000; // Ovos Dourados
@@ -959,7 +959,7 @@
                     }
                     if (valorArvoreDia > 0) {
 
-                        if (valorArvoreDia =< 20000)
+                        if (valorArvoreDia <= 20000)
                             valorTotal += (valorArvoreDia * 300) / 1000; // Presente por Recarga
                         else 
                             valorTotal += (20000 * 300) / 1000; // Presente por Recarga
