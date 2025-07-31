@@ -923,11 +923,18 @@
                     if (simDay.getDay() == 4) {
                         valorTotal += 80; // Camera do Tesouro
                         valorTotal += chavesCaverna;
-                        valorTotal += 220; //Dados
+                        valorTotal += 500; //Dados
                     }
                     if (valorFukuDia > 0) {
-                        valorTotal += (valorFukuDia * 250) / 1000; // Ovos Dourados
-                        valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
+
+                        if (valorFukuDia =< 20000)
+                            valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
+                        else
+                            valorTotal += (20000 * 300) / 1000; // Presente por Recarga
+                        if (valorFukuDia =< 5000)
+                            valorTotal += (valorFukuDia * 250) / 1000; // Ovos Dourados
+                        else
+                            valorTotal += (5000 * 250) / 1000; // Ovos Dourados
                         if (valorFukuDia >= 500) {
                             valorTotal += 200; // Recarga Diaria
                         }
@@ -951,7 +958,12 @@
                         valorTotal += 240; // Grande Roleta;
                     }
                     if (valorArvoreDia > 0) {
-                        valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
+
+                        if (valorArvoreDia =< 20000)
+                            valorTotal += (valorArvoreDia * 300) / 1000; // Presente por Recarga
+                        else 
+                            valorTotal += (20000 * 300) / 1000; // Presente por Recarga
+
                         if (valorArvoreDia * 7 >= 100000) {
                             valorTotal += valorArvoreDia * 0.2; //Presente Aniversário
                         } else {
