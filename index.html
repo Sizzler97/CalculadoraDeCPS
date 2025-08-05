@@ -697,6 +697,11 @@
                 return; // impede a continuação do envio
             }
 
+            if (transporte + saque > 3) {
+                alert('O numero de transportes+saques não pode ser maior que 3.');
+                return;
+            }
+
             let simDay = new Date(today);
             let simMonthNumberOfDays = new Date(simDay.getFullYear(), simDay.getMonth() + 1, 0).getDate();
             let simDiffTime = Math.abs(simDay - startDate);
