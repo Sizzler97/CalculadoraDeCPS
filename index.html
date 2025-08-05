@@ -697,6 +697,12 @@
                 return; // impede a continuação do envio
             }
 
+            const transporteInput = document.getElementById("transporte");
+            const saqueInput = document.getElementById("saque");
+
+            let transporte = parseInt(transporteInput.value) || 0;
+            let saque = parseInt(saqueInput.value) || 0;
+
             console.log(transporte);
             console.log(saque);
             
