@@ -422,6 +422,58 @@
             }
         }
 
+
+        .youtube-strip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1500px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .youtube-strip h2 {
+            margin: 0 0 10px;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        #video-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .video-card {
+            flex: 0 0 200px;
+            background: var(--input-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: scale(1.05);
+        }
+
+        .video-card img {
+            width: 100%;
+            display: block;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .video-card p {
+            margin: 10px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -558,6 +610,12 @@
         </div>
     </main>
 
+    <section class="youtube-strip">
+        <h2>Últimos Vídeos</h2>
+        <div id="video-container"></div>
+    </section>
+
+
     <footer>
         Feito por <strong>S546-Sizzlu</strong>. Veja o projeto no
         <a href="https://github.com/Sizzler97/CalculadoraDeCPS" target="_blank">GitHub</a>.
@@ -581,6 +639,29 @@
                 localStorage.setItem('theme', 'light');
             }
         });
+
+        const apiKey = "YOUR_API_KEY";
+
+        fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&forHandle=WillTutorNaruto&part=snippet&order=date&maxResults=6&type=video`)
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById("video-container");
+                container.innerHTML = ""; // clear previous contents
+                data.items.forEach(item => {
+                    const vidId = item.id.videoId;
+                    const thumb = item.snippet.thumbnails.medium.url;
+                    const title = item.snippet.title;
+                    const card = document.createElement("div");
+                    card.className = "video-card";
+                    card.innerHTML = `
+          <img src="${thumb}" alt="${title}">
+          <p>${title}</p>
+        `;
+                    card.addEventListener("click", () => window.open(`https://youtu.be/${vidId}`, "_blank"));
+                    container.appendChild(card);
+                });
+            })
+            .catch(err => console.error("Erro ao carregar vídeos do YouTube:", err));
 
         const semanaFukuCheckbox = document.getElementById('semana_fuku');
         const valorFukuInput = document.getElementById('valor_fuku');
@@ -645,7 +726,7 @@
         let bonusMedalha;
         let bonusPergaminho;
 
-        
+
 
         document.getElementById('cupomForm').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -693,7 +774,7 @@
 
             console.log(transporte);
             console.log(saque);
-            
+
             if (transporte + saque > 3) {
                 alert('O numero de transportes+saques não pode ser maior que 3.');
                 return;
@@ -799,7 +880,7 @@
 
                 valorTotal += arvore * 2 + 1;
 
-                
+
 
                 if (mensal300 > 0 && mensal300Dias == 0) {
                     mensal300--;
@@ -961,7 +1042,7 @@
                 }
                 // Semana da Raspadinha
                 else if (simWichWeek == 1) {
-                    valorTotal += ajudaNinjaSinosDia; 
+                    valorTotal += ajudaNinjaSinosDia;
                     valorTotal += lanterna_desejos;
                     if (simDay.getDay() == 4) {
                         valorTotal += recrutamento_limitado;
@@ -980,7 +1061,7 @@
 
                         if (valorArvoreDia <= 20000)
                             valorTotal += (valorArvoreDia * 300) / 1000; // Presente por Recarga
-                        else 
+                        else
                             valorTotal += (20000 * 300) / 1000; // Presente por Recarga
 
                         if (valorArvoreDia * 7 >= 100000) {
