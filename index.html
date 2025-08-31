@@ -789,15 +789,17 @@
                 simWichWeek = Math.floor((simDiffDays / 7) % 4);
 
                 valorTotal += 40 * transporte;
-                valorTotal += 40 * saque;
+                valorTotal += 50 * saque;
 
-                valorTotal += 10; //Teste Sobrevivencia
+                valorTotal += 5; //Teste Sobrevivencia
                 valorTotal += 10; // 1h online
                 valorTotal += 30; //Roleta da Guild
 
                 valorTotal += bonusMedalha;
 
                 valorTotal += arvore * 2 + 1;
+
+                
 
                 if (mensal300 > 0 && mensal300Dias == 0) {
                     mensal300Dias = 30;
@@ -1034,6 +1036,8 @@
                 }
 
                 simDay.setDate(simDay.getDate() + 1);
+
+                console.log(mensal300);
 
                 console.log(valorTotal);
                 console.log(quantidadeDesejada);
