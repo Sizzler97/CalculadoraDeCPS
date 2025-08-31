@@ -802,6 +802,7 @@
                 
 
                 if (mensal300 > 0 && mensal300Dias == 0) {
+                    mensal300--;
                     mensal300Dias = 30;
                     valorTotal += 300;
                 }
@@ -811,6 +812,7 @@
                 }
 
                 if (mensal600 > 0 && mensal600Dias == 0) {
+                    mensal600--;
                     mensal600Dias = 30;
                     valorTotal += 600;
                 }
@@ -1037,7 +1039,6 @@
 
                 simDay.setDate(simDay.getDate() + 1);
 
-                console.log(mensal300);
 
                 console.log(valorTotal);
                 console.log(quantidadeDesejada);
