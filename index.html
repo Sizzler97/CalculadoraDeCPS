@@ -609,7 +609,7 @@
             </div>
         </div>
     </main>
-
+    <!--
     <section class="youtube-strip">
         <h2>Últimos vídeos</h2>
         <iframe width="100%"
@@ -620,7 +620,7 @@
         </iframe>
 
     </section>
-
+    -->
 
     <footer>
         Feito por <strong>S546-Sizzlu</strong>. Veja o projeto no
@@ -645,29 +645,6 @@
                 localStorage.setItem('theme', 'light');
             }
         });
-
-        const apiKey = "YOUR_API_KEY";
-
-        fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&forHandle=WillTutorNaruto&part=snippet&order=date&maxResults=6&type=video`)
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById("video-container");
-                container.innerHTML = ""; // clear previous contents
-                data.items.forEach(item => {
-                    const vidId = item.id.videoId;
-                    const thumb = item.snippet.thumbnails.medium.url;
-                    const title = item.snippet.title;
-                    const card = document.createElement("div");
-                    card.className = "video-card";
-                    card.innerHTML = `
-          <img src="${thumb}" alt="${title}">
-          <p>${title}</p>
-        `;
-                    card.addEventListener("click", () => window.open(`https://youtu.be/${vidId}`, "_blank"));
-                    container.appendChild(card);
-                });
-            })
-            .catch(err => console.error("Erro ao carregar vídeos do YouTube:", err));
 
         const semanaFukuCheckbox = document.getElementById('semana_fuku');
         const valorFukuInput = document.getElementById('valor_fuku');
