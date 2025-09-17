@@ -593,13 +593,13 @@
                             <label>
                                 <input type="checkbox" id="semana_fuku"> Casha em semana Fuku?
                             </label>
-                            <input type="number" id="valor_fuku" placeholder="Por dia" style="margin-left: 10px; display: none; width: 150px;" />
+                            <input type="number" id="valor_fuku" placeholder="Lingotes por dia" style="margin-left: 10px; display: none; width: 150px;" />
                         </div>
                         <div class="mensal-group">
                             <label>
                                 <input type="checkbox" id="semana_arvore"> Casha em semana 	&Aacute;rvore?
                             </label>
-                            <input type="number" id="valor_arvore" placeholder="Por dia" style="margin-left: 10px; display: none; width: 150px; " />
+                            <input type="number" id="valor_arvore" placeholder="Lingotes por dia" style="margin-left: 10px; display: none; width: 150px; " />
                         </div>
                     </div>
                 </div>
@@ -1041,13 +1041,13 @@
                         valorTotal += 240; // Grande Roleta;
                     }
                     if (valorArvoreDia > 0) {
-
+                        
                         if (valorArvoreDia <= 20000)
                             valorTotal += (valorArvoreDia * 300) / 1000; // Presente por Recarga
                         else
                             valorTotal += (20000 * 300) / 1000; // Presente por Recarga
 
-                        if (valorArvoreDia * 7 >= 100000) {
+                        if (valorArvoreDia * 7 <= 100000) {
                             valorTotal += valorArvoreDia * 0.2; //Presente Aniversário
                         } else {
                             valorTotal += 20000; //Presente Aniversário cps maximos
@@ -1111,6 +1111,8 @@
                 simMonthNumberOfDays = new Date(simDay.getFullYear(), simDay.getMonth() + 1, 0).getDate();
 
                 if (simDay.getDay() == 7) simDay.getDay() = 0;
+
+                Math.round(valorTotal);
             } while (valorTotal < quantidadeDesejada);
 
 
