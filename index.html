@@ -424,27 +424,46 @@
 
 
         .youtube-strip {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            background: var(--header-bg);
+            color: var(--header-text);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            max-width: 100%;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+            max-height: 50px; /* collapsed height */
+            padding: 10px 20px;
+            position: relative;
+        }
+
+        .youtube-strip.expanded {
+            max-height: 500px; /* enough to show iframe */
             padding: 20px;
-            margin: 20px auto;
-            max-width: 1500px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .youtube-strip h2 {
-            margin: 0 0 10px;
-            color: var(--accent);
-            text-align: center;
+            margin: 0;
+            font-size: 18px;
         }
 
-        #video-container {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            scroll-behavior: smooth;
+        .youtube-strip iframe {
+            width: 100%;
+            height: 400px;
+            margin-top: 15px;
+            border-radius: 12px;
+        }
+
+        .toggle-arrow {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            cursor: pointer;
+            font-size: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        .youtube-strip.expanded .toggle-arrow {
+            transform: rotate(180deg);
         }
 
         .video-card {
@@ -608,26 +627,16 @@
 
             </div>
         </div>
-        <section class="youtube-strip">
-            <h2>Últimos vídeos</h2>
-            <iframe width="100%"
-                    height="400"
-                    src="https://www.youtube.com/embed?listType=playlist&list=UUdueymqGutwBsvB2b9uNXCw"
+        <section class="youtube-strip" id="ytStrip">
+            <h2>Último vídeo</h2>
+            <span class="toggle-arrow" id="ytToggle">▼</span>
+            <iframe src="https://www.youtube.com/embed?listType=playlist&list=UUdueymqGutwBsvB2b9uNXCw"
                     frameborder="0"
                     allowfullscreen>
             </iframe>
-
         </section>
 
     </main>
-    <!--
-
-        <iframe>
-            src="https://www.youtube.com/embed?listType=playlist&list=UUCdueymqGutwBsvB2b9uNXCw"
-        </iframe>
-
-    
-    -->
 
     <footer>
         Feito por <strong>S546-Sizzlu</strong>. Veja o projeto no
@@ -652,6 +661,15 @@
                 localStorage.setItem('theme', 'light');
             }
         });
+
+
+        const strip = document.getElementById("ytStrip");
+        const toggle = document.getElementById("ytToggle");
+
+        toggle.addEventListener("click", () => {
+            strip.classList.toggle("expanded");
+        });
+
 
         const semanaFukuCheckbox = document.getElementById('semana_fuku');
         const valorFukuInput = document.getElementById('valor_fuku');
