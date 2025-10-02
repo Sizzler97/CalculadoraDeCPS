@@ -608,18 +608,25 @@
 
             </div>
         </div>
+        <section class="youtube-strip">
+            <h2>Últimos vídeos</h2>
+            <iframe width="100%"
+                    height="400"
+                    src="https://www.youtube.com/embed?listType=playlist&list=UUdueymqGutwBsvB2b9uNXCw"
+                    frameborder="0"
+                    allowfullscreen>
+            </iframe>
+
+        </section>
+
     </main>
     <!--
-    <section class="youtube-strip">
-        <h2>Últimos vídeos</h2>
-        <iframe width="100%"
-                height="400"
-                src="https://www.youtube.com/embed?listType=user_uploads&list=UCdueymqGutwBsvB2b9uNXCw"
-                frameborder="0"
-                allowfullscreen>
+
+        <iframe>
+            src="https://www.youtube.com/embed?listType=playlist&list=UUCdueymqGutwBsvB2b9uNXCw"
         </iframe>
 
-    </section>
+    
     -->
 
     <footer>
@@ -1041,7 +1048,7 @@
                         valorTotal += 240; // Grande Roleta;
                     }
                     if (valorArvoreDia > 0) {
-                        
+
                         if (valorArvoreDia <= 20000)
                             valorTotal += (valorArvoreDia * 300) / 1000; // Presente por Recarga
                         else
