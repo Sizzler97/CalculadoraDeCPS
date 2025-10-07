@@ -180,6 +180,9 @@
         main {
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: nowrap;
             padding: 40px 10px;
         }
 
@@ -442,9 +445,11 @@
             overflow: hidden;
             transition: max-height 0.5s ease, padding 0.3s ease;
             max-height: 50px; /* collapsed height */
-            padding: 8px 15px; 
+            padding: 8px 15px;
             position: relative;
             margin-top: 60px;
+            flex: 0 0 20%;
+            margin-left: 20px;
         }
 
         .youtube-strip.expanded {
@@ -508,6 +513,23 @@
             color: var(--text);
         }
 
+        @media (max-width: 1200px) {
+            main {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .square {
+                width: 100%;
+                max-width: 1500px;
+            }
+
+            .youtube-strip {
+                order: 2; /* força o YouTube a ir depois do .square */
+                max-width: 90%;
+                margin: 30px auto 0 auto; /* centraliza */
+            }
+        }
 
 
     </style>
