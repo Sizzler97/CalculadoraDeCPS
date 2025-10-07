@@ -318,6 +318,7 @@
             opacity: 0;
             position: absolute;
             z-index: 10;
+            left: 50%;
             transform: translateX(-90%);
             background-color: #333;
             color: #fff;
@@ -337,6 +338,15 @@
         .tooltip-container:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .tooltip-container .tooltip-text {
+                transform: none;
+                left: 50%;
+                right: 50%;
+                max-width: min(200px, 80vw);
+            }
         }
 
         .fa-info-circle {
