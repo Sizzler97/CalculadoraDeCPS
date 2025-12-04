@@ -1373,118 +1373,62 @@
                     }
 
                     if (carteira500 > 0 && carteira500Dias == 0 && simDay.getDay() != 3) {
+                        carteira500--;
                         if (simDay.getDay() != 5) {
-                            carteira500--;
-
-                            valorTotal += 200 * 5;
-                            cuponsPorFonte.carteira += 200 * 5;
+                            carteira500Dias = 5;
                         } else if (simDay.getDay() != 6) {
-                            carteira500--;
-
-                            valorTotal += 200 * 4;
-                            cuponsPorFonte.carteira += 200 * 4;
+                            carteira500Dias = 4;
                         } else if (simDay.getDay() != 0) {
-                            carteira500--;
-
-                            valorTotal += 200 * 3;
-                            cuponsPorFonte.carteira += 200 * 3;
+                            carteira500Dias = 3;
                         } else if (simDay.getDay() != 1) {
-                            carteira500--;
-
-                            valorTotal += 200 * 2;
-                            cuponsPorFonte.carteira += 200 * 2;
+                            carteira500Dias = 2;
                         } else if (simDay.getDay() != 2) {
-                            carteira500--;
-
-                            valorTotal += 200;
-                            cuponsPorFonte.carteira += 200;
+                            carteira500Dias = 1;
                         }
                     }
 
                     if (carteira1000 > 0 && carteira1000Dias == 0 && simDay.getDay() != 3) {
+                        carteira1000--;
                         if (simDay.getDay() != 5) {
-                            carteira1000--;
-
-                            valorTotal += 300 * 5;
-                            cuponsPorFonte.carteira += 300 * 5;
+                            carteira1000Dias = 5;
                         } else if (simDay.getDay() != 6) {
-                            carteira1000--;
-
-                            valorTotal += 300 * 4;
-                            cuponsPorFonte.carteira += 300 * 4;
+                            carteira1000Dias = 4;
                         } else if (simDay.getDay() != 0) {
-                            carteira1000--;
-
-                            valorTotal += 300 * 3;
-                            cuponsPorFonte.carteira += 300 * 3;
+                            carteira1000Dias = 3;
                         } else if (simDay.getDay() != 1) {
-                            carteira1000--;
-
-                            valorTotal += 300 * 2;
-                            cuponsPorFonte.carteira += 300 * 2;
+                            carteira1000Dias = 2;
                         } else if (simDay.getDay() != 2) {
-                            carteira1000--;
-
-                            valorTotal += 300;
-                            cuponsPorFonte.carteira += 300;
+                            carteira1000Dias = 1;
                         }
                     }
 
                     if (carteira5000 > 0 && carteira5000Dias == 0 && simDay.getDay() != 3) {
+                        carteira5000--;
                         if (simDay.getDay() != 5) {
-                            carteira5000--;
-
-                            valorTotal += 1400 * 5;
-                            cuponsPorFonte.carteira += 1400 * 5;
+                            carteira5000Dias = 5;
                         } else if (simDay.getDay() != 6) {
-                            carteira5000--;
-
-                            valorTotal += 1400 * 4;
-                            cuponsPorFonte.carteira += 1400 * 4;
+                            carteira5000Dias = 4;
                         } else if (simDay.getDay() != 0) {
-                            carteira5000--;
-
-                            valorTotal += 1400 * 3;
-                            cuponsPorFonte.carteira += 1400 * 3;
+                            carteira5000Dias = 3;
                         } else if (simDay.getDay() != 1) {
-                            carteira5000--;
-
-                            valorTotal += 1400 * 2;
-                            cuponsPorFonte.carteira += 1400 * 2;
+                            carteira5000Dias = 2;
                         } else if (simDay.getDay() != 2) {
-                            carteira5000--;
-
-                            valorTotal += 1400;
-                            cuponsPorFonte.carteira += 1400;
+                            carteira5000Dias = 1;
                         }
                     }
 
                     if (carteira9000 > 0 && carteira9000Dias == 0 && simDay.getDay() != 3) {
+                        carteira9000--;
                         if (simDay.getDay() != 5) {
-                            carteira9000--;
-
-                            valorTotal += 2500 * 5;
-                            cuponsPorFonte.carteira += 2500 * 5;
+                            carteira9000Dias = 5;
                         } else if (simDay.getDay() != 6) {
-                            carteira9000--;
-
-                            valorTotal += 2500 * 4;
-                            cuponsPorFonte.carteira += 2500 * 4;
+                            carteira9000Dias = 4;
                         } else if (simDay.getDay() != 0) {
-                            carteira9000--;
-
-                            valorTotal += 2500 * 3;
-                            cuponsPorFonte.carteira += 2500 * 3;
+                            carteira9000Dias = 3;
                         } else if (simDay.getDay() != 1) {
-                            carteira9000--;
-
-                            valorTotal += 2500 * 2;
-                            cuponsPorFonte.carteira += 2500 * 2;
+                            carteira9000Dias = 2;
                         } else if (simDay.getDay() != 2) {
-                            carteira9000--;
-
-                            valorTotal += 2500;
-                            cuponsPorFonte.carteira += 2500;
+                            carteira9000Dias = 1;
                         }
                     }
 
