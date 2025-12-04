@@ -531,6 +531,60 @@
             }
         }
 
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .tooltip-container-tempo {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background: #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            min-width: 250px; /* prevents small size */
+            max-width: 300px; /* wraps long text */
+            white-space: normal; /* allows line breaks */
+            word-wrap: break-word;
+            z-index: 1000;
+            transition: 0.2s ease;
+        }
+
+        .tooltip-container-tempo:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #tempo {
+            width: 100%;
+            background-color: var(--input-bg) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--border);
+            padding: 10px 40px 10px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        body.dark-mode #tempo {
+            background-color: #2b2b2b !important; /* darker for dark mode */
+            color: #f1f1f1 !important;
+            border: 1px solid #555 !important;
+        }
 
     </style>
 </head>
@@ -557,8 +611,16 @@
                     <label for="desejados">N&uacute;mero de cupons desejados</label>
                     <input type="number" id="desejados" name="desejados" placeholder="Ex: 110000">
 
-                    <label for="tempo">Tempo necess&aacute;rio</label>
-                    <input type="text" id="tempo" readonly>
+                    <label for="tempo">Tempo necessário</label>
+
+                    <div class="input-wrapper ">
+                        <input class="tempo-necessario-box" type="text" id="tempo" readonly>
+
+                        <span class="tooltip-container tooltip-container-tempo" id="myTooltip" >
+                            <i class="fa fa-info-circle"></i>
+                            <div class="tooltip-text" id="tempoExtra"></div>
+                        </span>
+                    </div>
 
                     <label for="medalha">Medalha</label>
                     <select id="medalha" name="medalha">
@@ -594,8 +656,7 @@
                 <div class="tooltip-container">
                     <i class="fa fa-info-circle"></i>
                     <div class="tooltip-text">
-                        Inserir a quantidade de mensais/carteiras que ter&aacute;s. <br>
-                        Por exemplo, se tens 1 mensal ativo e +2k lingotes para +2 mensais escreve 3.
+                        Inserir a quantidade de mensais/carteiras que ter&aacute;. 
                     </div>
                 </div>
                 <div class="mensal-container">
@@ -654,8 +715,8 @@
                     <div class="tooltip-container">
                         <i class="fa fa-info-circle"></i>
                         <div class="tooltip-text">
-                            Inserir a quantidade de cash por dia nessas semanas. <br>
-                            Por exemplo, 5,000 lingotes por dia na semana do Fuku, que daria 35,000 na semana.
+                            Inserir a quantidade de cash por dia. <br>
+                            Por exemplo, 5,000 lingotes por dia daria 35,000 na semana.
                         </div>
                     </div>
                     <h3>Eventos Cash</h3>
@@ -713,7 +774,7 @@
         });
 
         
-
+        document.getElementById("myTooltip").classList.add("hidden");
         
         (async function () {
             const RSS_URL = "https://www.youtube.com/feeds/videos.xml?channel_id=UCdueymqGutwBsvB2b9uNXCw";
@@ -851,7 +912,7 @@
             if (quantidadeAtual > quantidadeDesejada) {
                 alert('A quantidade atual não pode ser maior que a quantidade desejada.');
                 document.getElementById('quantidade').focus();
-                return; // impede a continuação do envio
+                return; 
             }
 
             const transporteInput = document.getElementById("transporte");
@@ -859,9 +920,6 @@
 
             let transporte = parseInt(transporteInput.value) || 0;
             let saque = parseInt(saqueInput.value) || 0;
-
-            console.log(transporte);
-            console.log(saque);
 
             if (transporte + saque > 3) {
                 alert('O numero de transportes+saques não pode ser maior que 3.');
@@ -951,22 +1009,50 @@
                 valorArvoreDia = parseInt(document.getElementById('valor_arvore').value) || 0;
 
 
+            let cuponsPorFonte = {
 
+                arena_duelo: 0,
+                pergaminho: 0,
+
+                ilusao: 0,
+
+                checkin: 0,
+
+                eventos_diarios: 0,
+
+                eventos_limitados: 0,
+
+                cash: 0,
+
+                mensal: 0,
+
+                carteira: 0,
+
+            };
             do {
                 simDiffTime = Math.abs(simDay - startDate);
                 simDiffDays = Math.floor(simDiffTime / (1000 * 60 * 60 * 24));
                 simWichWeek = Math.floor((simDiffDays / 7) % 4);
 
                 valorTotal += 40 * transporte;
+                cuponsPorFonte.eventos_diarios += 40 * transporte;
                 valorTotal += 50 * saque;
+                cuponsPorFonte.eventos_diarios += 50 * saque;
 
-                valorTotal += 5; //Teste Sobrevivencia
+                valorTotal += 2; //Teste Sobrevivencia
+                cuponsPorFonte.eventos_diarios += 2;
+
                 valorTotal += 10; // 1h online
-                valorTotal += 30; //Roleta da Guild
+                cuponsPorFonte.eventos_diarios += 10;
+
+                valorTotal += 40; //Roleta da Guild
+                cuponsPorFonte.eventos_diarios += 40;
 
                 valorTotal += bonusMedalha;
+                cuponsPorFonte.eventos_diarios += bonusMedalha;
 
                 valorTotal += arvore * 2 + 1;
+                cuponsPorFonte.eventos_diarios += arvore * 2 + 1;;
 
 
 
@@ -974,26 +1060,31 @@
                     mensal300--;
                     mensal300Dias = 30;
                     valorTotal += 300;
+                    cuponsPorFonte.mensal += 300;
                 }
 
                 if (mensal300Dias > 0) {
                     valorTotal += 50;
+                    cuponsPorFonte.mensal += 50;
                 }
 
                 if (mensal600 > 0 && mensal600Dias == 0) {
                     mensal600--;
                     mensal600Dias = 30;
                     valorTotal += 600;
+                    cuponsPorFonte.mensal += 600;
                 }
 
                 if (mensal600Dias > 0) {
                     valorTotal += 100;
+                    cuponsPorFonte.mensal += 100;
                 }
 
                 if (document.getElementById('arena_duelo').checked) {
                     const diffArena = Math.floor((simDay - arenaDueloStart) / (1000 * 60 * 60 * 24));
                     if (diffArena >= 0 && diffArena % 63 === 0) {
                         valorTotal += 1460;
+                        cuponsPorFonte.arena_duelo += 1460;
                     }
                 }
 
@@ -1001,140 +1092,195 @@
                     const diffPergaminho = Math.floor((simDay - pergaminhoCrescimentoStart) / (1000 * 60 * 60 * 24));
                     if (diffPergaminho >= 0 && diffPergaminho % 56 === 0) {
                         valorTotal += 1800;
+                        cuponsPorFonte.pergaminho += 1800;
                     }
                 }
 
                 if (simDay.getDay() == 1) {
                     if (ilusaoPers == 1) {
                         valorTotal += 800;
+                        cuponsPorFonte.ilusao += 800;
                     }
                     else if (ilusaoPers == 2) {
                         valorTotal += 700;
+                        cuponsPorFonte.ilusao += 700;
                     }
                     else if (ilusaoPers == 3) {
                         valorTotal += 600;
+                        cuponsPorFonte.ilusao += 600;
                     }
                     else if (ilusaoPers >= 4 && ilusaoPers <= 10) {
                         valorTotal += 400;
+                        cuponsPorFonte.ilusao += 400;
                     }
                     else if (ilusaoPers >= 11 && ilusaoPers <= 20) {
                         valorTotal += 350;
+                        cuponsPorFonte.ilusao += 350;
                     }
                     else if (ilusaoPers >= 21 && ilusaoPers <= 50) {
                         valorTotal += 320;
+                        cuponsPorFonte.ilusao += 320;
                     }
                     else if (ilusaoPers >= 51 && ilusaoPers <= 100) {
                         valorTotal += 300;
+                        cuponsPorFonte.ilusao += 300;
                     }
                     else {
                         valorTotal += 250;
+                        cuponsPorFonte.ilusao += 250
                     }
 
                     if (ilusaoESO == 1) {
                         valorTotal += 800;
+                        cuponsPorFonte.ilusao += 800;
                     }
                     else if (ilusaoESO == 2) {
                         valorTotal += 700;
+                        cuponsPorFonte.ilusao += 700;
                     }
                     else if (ilusaoESO == 3) {
                         valorTotal += 600;
+                        cuponsPorFonte.ilusao += 600;
                     }
                     else if (ilusaoESO >= 4 && ilusaoESO <= 10) {
                         valorTotal += 400;
+                        cuponsPorFonte.ilusao += 400;
                     }
                     else if (ilusaoESO >= 11 && ilusaoESO <= 20) {
                         valorTotal += 350;
+                        cuponsPorFonte.ilusao += 350;
                     }
                     else if (ilusaoESO >= 21 && ilusaoESO <= 50) {
                         valorTotal += 320;
+                        cuponsPorFonte.ilusao += 320;
                     }
                     else if (ilusaoESO >= 51 && ilusaoESO <= 100) {
                         valorTotal += 300;
+                        cuponsPorFonte.ilusao += 300;
                     }
                     else {
                         valorTotal += 250;
+                        cuponsPorFonte.ilusao += 250;
                     }
 
                     if (ilusaoAtaqueBasico == 1) {
                         valorTotal += 800;
+                        cuponsPorFonte.ilusao += 800;
                     }
                     else if (ilusaoAtaqueBasico == 2) {
                         valorTotal += 700;
+                        cuponsPorFonte.ilusao += 700;
                     }
                     else if (ilusaoAtaqueBasico == 3) {
                         valorTotal += 600;
+                        cuponsPorFonte.ilusao += 600;
                     }
                     else if (ilusaoAtaqueBasico >= 4 && ilusaoAtaqueBasico <= 10) {
                         valorTotal += 400;
+                        cuponsPorFonte.ilusao += 400;
                     }
                     else if (ilusaoAtaqueBasico >= 11 && ilusaoAtaqueBasico <= 20) {
                         valorTotal += 350;
+                        cuponsPorFonte.ilusao += 350;
                     }
                     else if (ilusaoAtaqueBasico >= 21 && ilusaoAtaqueBasico <= 50) {
                         valorTotal += 320;
+                        cuponsPorFonte.ilusao += 320;
                     }
                     else if (ilusaoAtaqueBasico >= 51 && ilusaoAtaqueBasico <= 100) {
                         valorTotal += 300;
+                        cuponsPorFonte.ilusao += 300;
                     }
                     else {
                         valorTotal += 250;
+                        cuponsPorFonte.ilusao += 250;
                     }
                 }
                 if (simDay.getDay() == 6) {
                     valorTotal += 160; //Invocação da Guild
                     valorTotal += bonusMedalha;
+                    cuponsPorFonte.eventos_diarios += bonusMedalha;
+                    cuponsPorFonte.eventos_diarios += 160;
                 }
 
                 //check-in
                 if (simDay.getDate() == 2) {
                     valorTotal += 10;
+                    cuponsPorFonte.checkin += 10;
                 }
                 if (simDay.getDate() == 5) {
                     valorTotal += 20;
+                    cuponsPorFonte.checkin += 20;
                 }
                 else if (simDay.getDate() == 10) {
                     valorTotal += 30;
+                    cuponsPorFonte.checkin += 30;
                 }
                 else if (simDay.getDate() == 17) {
                     valorTotal += 40;
+                    cuponsPorFonte.checkin += 40;
                 }
                 else if (simDay.getDate() == 26) {
                     valorTotal += 50;
+                    cuponsPorFonte.checkin += 50;
                 }
                 else if (simDay.getDate() == simMonthNumberOfDays) {
                     valorTotal += 100;
+                    cuponsPorFonte.checkin += 100;
                 }
 
                 // Semana do Fuku
                 if (simWichWeek == 0) {
                     if (simDay.getDay() == 4) {
                         valorTotal += 80; // Camera do Tesouro
+                        cuponsPorFonte.eventos_limitados += 80;
+
                         valorTotal += chavesCaverna;
+                        cuponsPorFonte.eventos_limitados += chavesCaverna;
+
                         valorTotal += 500; //Dados
+                        cuponsPorFonte.eventos_limitados += 500;
                     }
                     if (valorFukuDia > 0) {
 
                         if (valorFukuDia <= 20000) {
                             valorTotal += (valorFukuDia * 300) / 1000; // Presente por Recarga
+                            cuponsPorFonte.cash += (valorFukuDia * 300) / 1000;
                         } else {
                             valorTotal += (20000 * 300) / 1000; // Presente por Recarga
+                            cuponsPorFonte.cash += (20000 * 300) / 1000;
                         }
-                        if (valorFukuDia <= 5000)
+
+
+                        if (valorFukuDia <= 5000) {
                             valorTotal += (valorFukuDia * 250) / 1000; // Ovos Dourados
-                        else
+                            cuponsPorFonte.cash += (valorFukuDia * 250) / 1000;
+                        } else { 
                             valorTotal += (5000 * 250) / 1000; // Ovos Dourados
+                            cuponsPorFonte.cash += (5000 * 250) / 1000;
+                        }
+
+
                         if (valorFukuDia >= 500) {
                             valorTotal += 200; // Recarga Diaria
+                            cuponsPorFonte.cash += 200;
                         }
                     }
                 }
                 // Semana da Raspadinha
                 else if (simWichWeek == 1) {
                     valorTotal += ajudaNinjaSinosDia;
+                    cuponsPorFonte.eventos_limitados += ajudaNinjaSinosDia;
+
                     valorTotal += lanterna_desejos;
+                    cuponsPorFonte.eventos_limitados += lanterna_desejos;
+
                     if (simDay.getDay() == 4) {
                         valorTotal += recrutamento_limitado;
+                        cuponsPorFonte.eventos_limitados += recrutamento_limitado;
+
                         valorTotal += ajudaNinjaSinosSemana;
+                        cuponsPorFonte.eventos_limitados += ajudaNinjaSinosSemana;
                     }
                 }
                 // Semana da Árvore
@@ -1147,18 +1293,25 @@
                     }
                     if (valorArvoreDia > 0) {
 
-                        if (valorArvoreDia <= 20000)
+                        if (valorArvoreDia <= 20000) {
                             valorTotal += (valorArvoreDia * 300) / 1000; // Presente por Recarga
-                        else
+                            cuponsPorFonte.cash += (valorArvoreDia * 300) / 1000;
+                        }
+                        else {
                             valorTotal += (20000 * 300) / 1000; // Presente por Recarga
+                            cuponsPorFonte.cash += (20000 * 300) / 1000;
+                        }
 
                         if (valorArvoreDia * 7 <= 100000) {
                             valorTotal += valorArvoreDia * 0.2; //Presente Aniversário
+                            cuponsPorFonte.cash += valorArvoreDia * 0.2;
                         } else {
                             valorTotal += 20000; //Presente Aniversário cps maximos
+                            cuponsPorFonte.cash += 20000;
                         }
                         if (valorArvoreDia >= 500) {
                             valorTotal += 200; //Recarga Diaria
+                            cuponsPorFonte.cash += 200;
                         }
                     }
                 }
@@ -1167,43 +1320,58 @@
                     if (carteira500Dias > 0) {
                         valorTotal += 200;
                         carteira500Dias--;
+                        cuponsPorFonte.carteira += 200;
                     }
                     if (carteira1000Dias > 0) {
                         valorTotal += 300;
                         carteira1000Dias--;
+                        cuponsPorFonte.carteira += 300;
                     }
                     if (carteira5000Dias > 0) {
                         valorTotal += 1400;
                         carteira5000Dias--;
+                        cuponsPorFonte.carteira += 1400;
                     }
                     if (carteira9000Dias > 0) {
                         valorTotal += 2500;
                         carteira9000Dias--;
+                        cuponsPorFonte.carteira += 2500;
                     }
+
                     valorTotal += 30; //Treino Jutsu
-                    valorTotal += 30; // Festival de Cerejeira
+                    cuponsPorFonte.eventos_limitados += 30;
+
+
                     if (simDay.getDay() == 4) {
+                        valorTotal += 30; // Festival de Cerejeira
+                        cuponsPorFonte.eventos_limitados += 30;
+
                         if (carteira500 > 0) {
                             carteira500--;
                             valorTotal += 500; //1.º dia da carteira
+                            cuponsPorFonte.carteira += 500;
                             carteira500Dias = 6;
                         }
                         if (carteira1000 > 0) {
                             carteira1000--;
                             valorTotal += 800; //1.º dia da carteira
+                            cuponsPorFonte.carteira += 800;
                             carteira1000Dias = 6;
                         }
                         if (carteira5000 > 0) {
                             carteira5000--;
                             valorTotal += 4500; //1.º dia da carteira
+                            cuponsPorFonte.carteira += 4500;
                             carteira5000Dias = 6;
                         }
                         if (carteira9000 > 0) {
                             carteira9000--;
                             valorTotal += 7500; //1.º dia da carteira
+                            cuponsPorFonte.carteira += 7500;
                             carteira9000Dias = 6;
                         }
                     }
+
                 }
 
                 simDay.setDate(simDay.getDate() + 1);
@@ -1220,11 +1388,44 @@
                 Math.floor(valorTotal);
             } while (valorTotal < quantidadeDesejada);
 
+            let texto = "<center><b>Fonte dos Cupons</b>:</center><br>";
+
+            if (cuponsPorFonte.checkin > 0) {
+                texto += "Check in: " + cuponsPorFonte.checkin + " <br>";
+            }
+            if (cuponsPorFonte.eventos_diarios > 0){
+                texto += "Eventos Diarios: " + cuponsPorFonte.eventos_diarios + " <br>";
+            }
+            if (cuponsPorFonte.mensal > 0) {
+                texto += "Mensal: " + cuponsPorFonte.mensal + " <br>";
+            }
+            if (cuponsPorFonte.ilusao > 0) {
+                texto += "Ilusão: " + cuponsPorFonte.ilusao + " <br>";
+            }
+            if (cuponsPorFonte.eventos_limitados > 0) {
+                texto += "Eventos Limitados: " + cuponsPorFonte.eventos_limitados + " <br>";
+            }
+            if (cuponsPorFonte.arena_duelo > 0) {
+                texto += "Arena Duelo: " + cuponsPorFonte.arena_duelo + " <br>";
+            }
+            if (cuponsPorFonte.carteira > 0) {
+                texto += "Carteira: " + cuponsPorFonte.carteira + " <br>";
+            }
+            if (cuponsPorFonte.pergaminho > 0) {
+                texto += "Pergaminho de Crescimento: " + cuponsPorFonte.pergaminho + " <br>";
+            }
+            if (cuponsPorFonte.cash > 0) {
+                texto += "Eventos de Cash: " + cuponsPorFonte.cash + " <br>";
+            }
+
+            document.getElementById("tempoExtra").innerHTML = texto;
 
             const totalSimTime = Math.floor((simDay - today) / (1000 * 60 * 60 * 24));
-            const totalSimTimeMonths = (totalSimTime / 30).toFixed(1);
 
-            document.getElementById("tempo").value = "Será necessário por volta de " + totalSimTimeMonths + " meses";
+            document.getElementById("myTooltip").classList.remove("hidden");
+
+            document.getElementById("tempo").value = "Será necessário por volta de " + totalSimTime + " dias";
+            
         });
 
     </script>
