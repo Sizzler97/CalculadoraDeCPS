@@ -679,7 +679,7 @@
                         <div class="mensal-group"><label>500</label><input type="number" id="carteira500" min="0" name="carteira500" value="0" /></div>
                         <div class="mensal-group"><label>1k</label><input type="number" id="carteira1000" min="0" name="carteira1000" value="0" /></div>
                         <div class="mensal-group"><label>5k</label><input type="number" id="carteira5000" min="0" name="carteira5000" value="0" /></div>
-                        <div class="mensal-group"><label>9k</label><input type="number" id="carteira9000" min="0" name="carteira9000" value="0" /></div>
+                        <div class="mensal-group"><label>12k</label><input type="number" id="carteira12000" min="0" name="carteira12000" value="0" /></div>
                     </div>
                 </div>
 
@@ -937,7 +937,7 @@
             let carteira500Dias = 0;
             let carteira1000Dias = 0;
             let carteira5000Dias = 0;
-            let carteira9000Dias = 0;
+            let carteira12000Dias = 0;
 
             let arena_duelo = 0;
             let mobilizacao = 0;
@@ -971,7 +971,7 @@
             carteira500 = parseInt(document.getElementById('carteira500').value) || 0;
             carteira1000 = parseInt(document.getElementById('carteira1000').value) || 0;
             carteira5000 = parseInt(document.getElementById('carteira5000').value) || 0;
-            carteira9000 = parseInt(document.getElementById('carteira9000').value) || 0;
+            carteira12000 = parseInt(document.getElementById('carteira12000').value) || 0;
 
 
             transporte = parseInt(document.getElementById('transporte').value) || 0;
@@ -1332,9 +1332,9 @@
                         carteira5000Dias--;
                         cuponsPorFonte.carteira += 1400;
                     }
-                    if (carteira9000Dias > 0) {
-                        valorTotal += 2500;
-                        carteira9000Dias--;
+                    if (carteira12000Dias > 0) {
+                        valorTotal += 3500;
+                        carteira12000Dias--;
                         cuponsPorFonte.carteira += 2500;
                     }
 
@@ -1364,11 +1364,11 @@
                             cuponsPorFonte.carteira += 4500;
                             carteira5000Dias = 6;
                         }
-                        if (carteira9000 > 0) {
-                            carteira9000--;
-                            valorTotal += 7500; //1.º dia da carteira
-                            cuponsPorFonte.carteira += 7500;
-                            carteira9000Dias = 6;
+                        if (carteira12000 > 0) {
+                            carteira12000--;
+                            valorTotal += 9000; //1.º dia da carteira
+                            cuponsPorFonte.carteira += 9000;
+                            carteira12000Dias = 6;
                         }
                     }
 
@@ -1417,18 +1417,18 @@
                         }
                     }
 
-                    if (carteira9000 > 0 && carteira9000Dias == 0 && simDay.getDay() != 3) {
-                        carteira9000--;
+                    if (carteira12000 > 0 && carteira12000Dias == 0 && simDay.getDay() != 3) {
+                        carteira12000--;
                         if (simDay.getDay() != 5) {
-                            carteira9000Dias = 5;
+                            carteira12000Dias = 5;
                         } else if (simDay.getDay() != 6) {
-                            carteira9000Dias = 4;
+                            carteira12000Dias = 4;
                         } else if (simDay.getDay() != 0) {
-                            carteira9000Dias = 3;
+                            carteira12000Dias = 3;
                         } else if (simDay.getDay() != 1) {
-                            carteira9000Dias = 2;
+                            carteira12000Dias = 2;
                         } else if (simDay.getDay() != 2) {
-                            carteira9000Dias = 1;
+                            carteira12000Dias = 1;
                         }
                     }
 
