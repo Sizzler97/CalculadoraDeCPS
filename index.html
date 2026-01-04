@@ -20,6 +20,11 @@
             --header-text: #ffffff;
             --footer-bg: #f9f9f9;
             --footer-text: #666;
+            --button-bg: var(--header-bg);
+            --button-text: var(--header-text);
+            --button-border: #f4f4f4;
+            --button-hover-bg: #f4f4f4;
+            --button-hover-text: black;
         }
 
         body.dark-mode {
@@ -33,6 +38,11 @@
             --header-text: #111111; /* texto preto no dark */
             --footer-bg: #1a1a1a;
             --footer-text: #ccc;
+            --button-bg: #e8e8e8;
+            --button-text: #111111;
+            --button-border: #555555;
+            --button-hover-bg: #444;
+            --button-hover-text: white;
         }
 
         * {
@@ -153,12 +163,12 @@
         }
 
 
-            header h1 {
-                font-size: 3rem;
-                margin: 0;
-                flex: 1; /* permite que ocupe o espaço entre o início e o botão */
-                text-align: center;
-            }
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            flex: 1; /* permite que ocupe o espaço entre o início e o botão */
+            text-align: center;
+        }
 
         #toggle-theme {
             background: none;
@@ -172,10 +182,10 @@
             transition: background 0.3s, color 0.3s;
         }
 
-            #toggle-theme:hover {
-                background: white;
-                color: black;
-            }
+        #toggle-theme:hover {
+            background: white;
+            color: black;
+        }
 
         main {
             display: flex;
@@ -586,13 +596,37 @@
             border: 1px solid #555 !important;
         }
 
+
+        .button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 2px dashed var(--button-border);
+            padding: 24px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            min-width: 300px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .button:hover {
+            background-color: var(--button-hover-bg);
+            color: var(--button-hover-text);
+        }
+
+        .button .emoji {
+            font-size: 1.2em; /* bigger emoji */
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
     <header>
+        &nbsp;&nbsp;&nbsp;&nbsp;<button class="button" id="modeToggle"> <span class="emoji">⏳ Calcular por Tempo </span> </button>
         <h1>Calculadora de Cupons</h1>
         <div class="theme-switch">
-            <input type="checkbox" id="theme-toggle" />
+            <input type="checkbox" id="theme-toggle" /> 
             <label for="theme-toggle" class="toggle">
                 <span class="icon sun">☀️</span>
                 <span class="icon moon">🌙</span>
@@ -605,6 +639,7 @@
         <div class="square">
             <div class="left">
                 <form class="form-container" id="cupomForm">
+                    
                     <label for="quantidade">Quantidade atual de cupons</label>
                     <input type="number" id="quantidade" name="quantidade" placeholder="Ex: 5234">
 
@@ -616,7 +651,7 @@
                     <div class="input-wrapper ">
                         <input class="tempo-necessario-box" type="text" id="tempo" readonly>
 
-                        <span class="tooltip-container tooltip-container-tempo" id="myTooltip" >
+                        <span class="tooltip-container tooltip-container-tempo" id="myTooltip">
                             <i class="fa fa-info-circle"></i>
                             <div class="tooltip-text" id="tempoExtra"></div>
                         </span>
@@ -773,7 +808,63 @@
             }
         });
 
+        let mode = "RESOURCES";
+
+        const modeToggle = document.getElementById("modeToggle");
+        const emojiSpan = modeToggle.querySelector(".emoji");
+
+        const desejadosInput = document.getElementById("desejados");
+        const tempoInput = document.getElementById("tempo");
+
+        const desejadosLabel = document.querySelector('label[for="desejados"]');
+        const tempoLabel = document.querySelector('label[for="tempo"]');
+
+
+        function getTodayISO() {
+            const today = new Date();
+            return today.toISOString().split("T")[0];
+        }
         
+
+        modeToggle.addEventListener("click", () => {
+            mode = mode === "RESOURCES" ? "TIME" : "RESOURCES";
+
+            const isTimeMode = mode === "TIME";
+
+            // Tempo desejado
+            desejadosLabel.textContent = isTimeMode
+                ? "Tempo desejado"
+                : "Número de cupons desejados";
+
+            // Quantidade desejada
+            tempoLabel.textContent = isTimeMode
+                ? "Cupons obtidos"
+                : "Tempo necessário";
+
+            if (isTimeMode) {
+                desejadosInput.type = "date";
+                desejadosInput.min = getTodayISO(); // 👈 blocks past dates
+            } else {
+                desejadosInput.type = "number";
+                desejadosInput.removeAttribute("min");
+            }
+
+            tempoInput.value = "";
+            desejadosInput.value = "";
+
+            /*
+            modeToggle.innerHTML = isTimeMode
+                ? 'Calcular por Cupons'
+                : 'Calcular por Tempo';
+            */
+
+            if (mode === "TIME") {
+                emojiSpan.textContent = "💴 Calcular por Cupons";
+            } else {
+                emojiSpan.textContent = "⏳ Calcular por Tempo";
+            }
+        });
+
         document.getElementById("myTooltip").classList.add("hidden");
         
         (async function () {
@@ -1007,6 +1098,37 @@
 
             if (document.getElementById('semana_arvore').checked)
                 valorArvoreDia = parseInt(document.getElementById('valor_arvore').value) || 0;
+
+            let targetDate = null;
+
+            if (mode === "TIME") {
+                targetDate = new Date(document.getElementById("desejados").value);
+
+                if (isNaN(targetDate)) {
+                    alert("Selecione uma data válida");
+                    return;
+                }
+            }
+
+            if (mode === "TIME") {
+                const targetDate = new Date(desejadosInput.value);
+                const todayDate = new Date();
+
+                // Normalize times (important!)
+                targetDate.setHours(0, 0, 0, 0);
+                todayDate.setHours(0, 0, 0, 0);
+
+                if (isNaN(targetDate)) {
+                    alert("Selecione uma data válida.");
+                    return;
+                }
+
+                if (targetDate < todayDate) {
+                    alert("A data deve ser hoje ou no futuro.");
+                    desejadosInput.focus();
+                    return;
+                }
+            }
 
 
             let cuponsPorFonte = {
@@ -1435,48 +1557,53 @@
 
                 simMonthNumberOfDays = new Date(simDay.getFullYear(), simDay.getMonth() + 1, 0).getDate();
 
-                if (simDay.getDay() == 7) simDay.getDay() = 0;
 
                 Math.floor(valorTotal);
-            } while (valorTotal < quantidadeDesejada);
+            } while ((mode === "RESOURCES" && valorTotal < quantidadeDesejada) || (mode === "TIME" && simDay < targetDate) );
+
 
             let texto = "<center><b>Fonte dos Cupons</b>:</center><br>";
-
             if (cuponsPorFonte.checkin > 0) {
-                texto += "Check in: " + cuponsPorFonte.checkin + " <br>";
+                texto += "Check in: " + cuponsPorFonte.checkin.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.eventos_diarios > 0){
-                texto += "Eventos Diarios: " + cuponsPorFonte.eventos_diarios + " <br>";
+                texto += "Eventos Diarios: " + cuponsPorFonte.eventos_diarios.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.mensal > 0) {
-                texto += "Mensal: " + cuponsPorFonte.mensal + " <br>";
+                texto += "Mensal: " + cuponsPorFonte.mensal.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.ilusao > 0) {
-                texto += "Ilusão: " + cuponsPorFonte.ilusao + " <br>";
+                texto += "Ilusão: " + cuponsPorFonte.ilusao.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.eventos_limitados > 0) {
-                texto += "Eventos Limitados: " + cuponsPorFonte.eventos_limitados + " <br>";
+                texto += "Eventos Limitados: " + cuponsPorFonte.eventos_limitados.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.arena_duelo > 0) {
-                texto += "Arena Duelo: " + cuponsPorFonte.arena_duelo + " <br>";
+                texto += "Arena Duelo: " + cuponsPorFonte.arena_duelo.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.carteira > 0) {
-                texto += "Carteira: " + cuponsPorFonte.carteira + " <br>";
+                texto += "Carteira: " + cuponsPorFonte.carteira.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.pergaminho > 0) {
-                texto += "Pergaminho de Crescimento: " + cuponsPorFonte.pergaminho + " <br>";
+                texto += "Pergaminho de Crescimento: " + cuponsPorFonte.pergaminho.toLocaleString("fr-FR") + " <br>";
             }
             if (cuponsPorFonte.cash > 0) {
-                texto += "Eventos de Cash: " + cuponsPorFonte.cash + " <br>";
+                texto += "Eventos de Cash: " + cuponsPorFonte.cash.toLocaleString("fr-FR") + " <br>";
             }
 
+            const totalSimTime = Math.floor((simDay - today) / (1000 * 60 * 60 * 24));
             document.getElementById("tempoExtra").innerHTML = texto;
 
-            const totalSimTime = Math.floor((simDay - today) / (1000 * 60 * 60 * 24));
+            if (mode === "RESOURCES") {
+                document.getElementById("tempo").value = "Será necessário por volta de " + totalSimTime + " dias";
+            }
+            else if (mode === "TIME") {
+                document.getElementById("tempo").value = "Terá por volta de " + valorTotal.toLocaleString("fr-FR") +" cupons";
+            }
+
 
             document.getElementById("myTooltip").classList.remove("hidden");
 
-            document.getElementById("tempo").value = "Será necessário por volta de " + totalSimTime + " dias";
             
         });
 
