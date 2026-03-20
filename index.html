@@ -832,7 +832,7 @@
             const today = new Date();
             return today.toISOString().split("T")[0];
         }
-        
+
 
         modeToggle.addEventListener("click", () => {
             mode = mode === "RESOURCES" ? "TIME" : "RESOURCES";
@@ -1006,7 +1006,7 @@
 
             let valorTotal = quantidadeAtual;
 
-            if (quantidadeAtual > quantidadeDesejada) {
+            if (quantidadeAtual > quantidadeDesejada && mode != "TIME") {
                 alert('A quantidade atual não pode ser maior que a quantidade desejada.');
                 document.getElementById('quantidade').focus();
                 return; 
